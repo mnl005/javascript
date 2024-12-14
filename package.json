@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "dependencies": {
+    "esprima": "^4.0.1"
+  }
+}
