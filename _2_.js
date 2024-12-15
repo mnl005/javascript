@@ -544,10 +544,47 @@ console.table(Object.getOwnPropertyDescriptors(pp4));
 
 // arguments - 함수의 arguments 프로퍼티 값은 arguments 객체이다
 // 함수의 매개변수 갯수만큼 인수 전달 안 해도 오류 발생 없음
+// 초과된 인수는 함수의 arguments 객체에 저장
+// ... 매개변수 개수를 확정 못하는 가변 인자 함수를 구현시 유용
 function pp5(){console.table(arguments);}
 pp5(1,2,3,4,5,6,7,8);
+// 가변인자함수 구현 예시, 인수 전달 수만큼 반복한다
+function pp6(...x){
+    x.forEach((v) => console.log(v));
+    console.log('길이 : ',x.length);
+    return x.filter((v) => v > 3).reduce((v,n) => v + n,0.1);
+}
+let pp7 = pp6(1,2,3,4,5,6,7,8);
+console.log(pp7);
 
+// name 프로퍼티
+let pp8 = function inpp8(){};
+console.log(pp6.name); // ES6 에서 .name은 함수 객체를 가리키는 변수 이름을 값으로 갖는다
+console.log(pp8.name);
 
+// __proto__ 접근자 프로퍼티 - [[Prototype]] 내부 슬롯이 가리키는 프로토타입 객체에 접근하기 위한 접근자 프로퍼티
+// ... 모든 객체는 [[Prototype]] 라는 내부 슬롯을 갖는다
+// ... 내부 슬롯 직접 접근 불가
+// 모든 함수는 prototype 속성을 가진다 (화살표함수는 prototype속성 가지지 않는다)
+// 생성자 함수는 prototype을 상속받지 않고 가진다
+// 객체는 Object.prototype 또는 상속받은 프로토타입 통해 프로토타입 체인을 유지
+let oo1 = () => {};
+let oo2 = {
+    x(){}
+}
+function oo3(){};
+console.log(oo1.hasOwnProperty('prototype')); // false
+console.log(oo2.x.hasOwnProperty('prototype')) // false
+console.log(oo2.hasOwnProperty('prototype')) // false
+console.log(oo3.hasOwnProperty('prototype')) // true
+
+// 리터럴 방식으로 생성한 객체는 프로토 타입 객체인 Object.prototype의 프로퍼티를 상속받는다
+let ooo = {a:1};
+console.log(ooo.__proto__ === Object.prototype); // true
+console.log(ooo.hasOwnProperty('a')); // true
+console.log(ooo.hasOwnProperty('__proto__')) // false
+console.log(ooo.hasOwnProperty('prototype')) // false
+console.log(Object.hasOwnProperty('prototype')) // true
 
 
 
