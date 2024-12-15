@@ -442,23 +442,110 @@ let obj17 = {
 
 // 생성자 함수로 객체 생성 - 동일한 프로퍼티 구조의 인스턴스 생성 위한 탬플릿, 생성 인스턴스 초기화
 // 동일 구조의 객체를 new 키워드를 사용해 인스턴스 생성 가능
-// 함수를 new 연산자와 함께 호출해야 해당 함수는 생성자 함수로 동작
-// ... 암묵적으로 인스턴스가 생성되어 반환 및 this 바인딩
-// ... 함수 내부에서 this 바인딩 이후 this에 바인딩 되어있는 인스턴스가 초기화 된다
+// 함수를 생성자 함수로서 호출 - new 연산자와 함께 호출하여 객체를 생성한다
+// 인스턴스 생성과정
+// 1. 암묵적으로 빈 객체가 생성(인스턴스)되어 this에 바인딩 (런타임이전)
+// 2. this에 바인딩된 인스턴스 초기화
+// 3. 생성자 함수 내부의 처리가 끝나면 완성된 인스턴스가 바인딩된 this를 암묵적으로 반환
+// new 키워드 없이 함수 사용시 일반 함수로 동작하며 함수 내부의 this는 전역 객체를 가리킨다
 function Person(name,age){
     this.name = name || 'default_name';
     this.age = age || 10;
     this.info = function(){
         console.log('name : ',this.name, ' \n age : ', this.age);
     }
+    // return {}; // 반환값을 명시하면 this 반환이 무시된다 따라서 생성자 함수 내부에 return은 반드시 생략해야 한다
 }
-let p1 = new Person();
+let p1 = new Person(); // 인스턴스가 생성되며 Person 생성자 함수는 암묵적으로 this를 반환
 let p2 = new Person('lee',30);
 p1.info();
 p2.info();
 
+// 함수는 객체, 프로퍼티 소유가능, 메서드 소유가능, 객체와 달리 호출가능
+// ... 함수는 일반 객체의 내부슬롯과 내부 메서드를 포함, 함수 객체만을 위한 내부슬롯과 내부 메서드도 포함
+function P1(){};
+P1.v = 10;
+P1.f = function(){
+    console.log(this.v);
+}
+P1(); // 일반적 함수로서 호출 [[Call]] 내부 메서드 호출
+new P1(); // 생성자 함수로서 호출 [[Construct]] 내부 매서드 호출
 
+// constructor 함수 - 함수선언문,함수표현식,클래스
+// 함수 정의 방식에 따라 생성자 함수인지 구별
+function p3(){};
+let p4 = function(){};
+let p5 = {
+    p: function(){}
+}
+console.log(new p3());
+console.log(new p4());
+console.log(new p5.p());
 
+// non-constructor - 메서드,화살표 함수
+// 메서드 - 객체의 프로퍼티로 정의된 함수, ES6에선 축약 표현만 메서드로 인정
+let p6 = () => {};
+let p7 = {
+    x(){}
+}
+// new p6(); // 에러
+// new p7.x(); // 에러
+
+// new 연산자와 함께 함수 호출시 생성자 함수로 동작(non-constructor가 아닌 경우)
+function p8(x,y) {
+    return x + y;
+}
+console.log(new p8()); // 반환값이 무시되어 빈 객체가 생성되어 반환
+function p9(x,y){
+    return {x,y};
+}
+console.log(new p9(1,2)); // 함수가 생성한 객체가 반환
+
+// new.target - 생성자 함수가 new 연산자 없이 호출되는 경우를 막는다
+function p10(x,y){
+    if(!new.target){
+        return new p10(x,y);
+    }
+    if(!(this instanceof p10)){ // 스코프 세이프 생성자 패턴으로 new 연산자 없이 호출되는 경우르 막는다
+        return new p10(x,y);
+    }
+    this.x = x || 0;
+    this.y = y || 0;
+    this.info = function(){
+        console.log('info : ',x,y);
+    }
+}
+console.log(p10());
+
+// 빌트인 생성자 함수, Object와 Function 은 new 없이도 동일하게 작동
+console.log(Object());
+console.log(Function('x','return x'));
+// String,Number, Boolean 생성자 함수는 new 연산자와 호출시 String,Number,Boolean 객체를 생성해 반환
+// ... new 연산자 없이 호출시 문자열,숫자,불리언 반환
+console.log(new Number('10'));
+console.log(new Number('10'));
+console.log(new Boolean('10'));
+
+console.log(String('10'));
+console.log(Number('10'));
+console.log(Boolean('10'));
+
+// 일급객체 - 객체와 동일 사용 가능 - 객체는 값임으로 일급객체는 값과 동일취급 가능
+// ... 런타임 생성 가능 (무명 리터럴)
+// ... 변수나 자료구조에 저장 가능
+// ... 함수의 매개변수에 전달 가능
+// ... 함수의 반환값으로 사용 가능
+let pp1 = function () { return 1; };
+let pp2 = function inn() { return 2; };
+let pp3 = function (x) { return x(); };
+let result = pp3(pp1);
+let pp4 = { pp1, pp2, result };
+console.table(Object.getOwnPropertyDescriptors(pp4));
+
+// arguments - 함수의 arguments 프로퍼티 값은 arguments 객체이다
+// 함수의 매개변수 갯수만큼 인수 전달 안 해도 오류 발생 없음
+function pp5(){console.table(arguments);}
+pp5(1,2,3,4,5,6,7,8);
 
 
 
