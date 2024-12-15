@@ -14,11 +14,9 @@
 // 해당 코드로 원시값도 힙 영역에 저장됨을 알 수 있다
 console.log(process.memoryUsage());
 let heep1 = process.memoryUsage().heapUsed / 1024 / 1024;
-// const bigString1 = 'x'.repeat(10 * 1024 * 1024);
-// console.log(bigString1);
+const bigString1 = 'x'.repeat(10 * 1024 * 1024);
+console.log(bigString1); // 힙영역 메모리 유지를 위한 부분
 let heep2 = process.memoryUsage().heapUsed / 1024 / 1024;
 console.log(heep2 - heep1);
-console.log(process.memoryUsage());
-
 
 

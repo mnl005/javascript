@@ -1,7 +1,11 @@
 
+// @@ 변수 할당시 메모리 구조 @@
 // 변수에 원시값 할당시 - 변수 -> 스택메모리주소 -> 원시값
 // 변수에 객체 할당시 - 변수 -> 스택메모리주소 -> 참조값(힙주소) -> 객체값
 // 원시값도 예외적으로 힙영역에 저장되는 경우 있으나 값 자체는 여전히 불변
+// 원시값은 불변이냐, ++v1; 하면 기존 메모리 공간에 저장된 값을 덮어쓸 가능성이 높고
+// ... v1 = 1; 하면 해당 변수에 새로운 메모리 공간이 매핑될 가능성이 높다
+// ... 자바스크립트 엔진의 최적화 정도에 따라 메모리 동작이 달라질 수 있다
 // 원시값 저장시 메모리 구조 표현 - 변수에 원시값이 저장된 스택 메모리 주소가 매핑된다
 // 객체 저장시 메모리 구조 표현 - 변수에 객체가 저장된 힙 메모리 주소를 참조하는 참조값이 저장된 메모리 주소가 매핑된다
 
@@ -116,7 +120,6 @@ console.log(obj14.x.y);
 
 
 // 함수 - 일련의 과정을 문으로 구현하고 코드블록으로 감싸 하나의 실행단위로 정의한 것
-// 함수이름
 // 매개변수 - 함수 내부로 입력을 전달받는 변수
 // 입력 - 인수
 // 출력 - 반환값
@@ -135,9 +138,10 @@ console.log(obj14.x.y);
 // 함수 선언문 - fun1이라는 식별자가 자바스크립트 엔진에 의해 암묵적으로 생성후 함수 객체를 할당
 // 함수 호이스팅 - 런타임 이전 함수 선언문이 실행되고 식별자가 객체로 초기화
 function fun1(x) {
-    console.log(x, 'fun1',arguments);
+    console.log(x, 'fun1', arguments);
 }
-fun1(1,2,3,4);
+
+fun1(1, 2, 3, 4);
 
 // 표현식이 아닌 문이지만 변수에 할당시 표현식인 문으로 해석된다
 // 호출시 함수 이름이 아닌 식별자로 호출 - 기명함수
@@ -166,7 +170,7 @@ fun6(1);
 
 // 화살표함수 - function 키워드 대신 익명 함수로 정의
 // ... this 바인딩 방식 다르고, prototype 프로퍼티 없고, arguments 객체 생성 않는다
-let fun7 = (x) => (y) => (z) => console.log('fun7',x,y,z);
+let fun7 = (x) => (y) => (z) => console.log('fun7', x, y, z);
 fun7(1)(2)(3);
 
 // 함수의 반환문 - 함수의 실행중단, 리턴값 미명시시 undefined 반환, 반환문 생략시 undenined 반환
@@ -178,24 +182,35 @@ let fun8 = () => {
 console.log(fun8()); // undefined
 
 // 원시값은 그대로지만 객체는 원본이 훼손된다
-function fun9(num,obj){
+function fun9(num, obj) {
     num += 100;
     obj.name = 'lee';
 }
+
 let num3 = 0;
-let str2 = {name:'kim'};
-fun9(num3,str2);
-console.log(num3,str2);
+let str2 = {name: 'kim'};
+fun9(num3, str2);
+console.log(num3, str2);
 
 // 함수 선언문이 끝나는 위치에 세미콜론이 자동삽입 됨으로즉시 실행 함수는 그룹 연산자로 감싸야 한다
 // 익명 즉시 실행 함수
-(function() {console.log('now')}());
+(function () {
+    console.log('now')
+}());
 // 기명 즉시 실행 함수
-(function fun10(){console.log("fun10")}());
+(function fun10() {
+    console.log("fun10")
+}());
 // 즉시 실행 함수 예시
-(function () {console.log('f1')})();
-!function(){console.log('f2')}();
-+function(){console.log('f3')}();
+(function () {
+    console.log('f1')
+})();
+!function () {
+    console.log('f2')
+}();
++function () {
+    console.log('f3')
+}();
 
 // 재귀 함수 - 자기 자신을 호출하는 함수
 // 탈출 조건 없다면 스택 오버플로 에러 발생
@@ -203,26 +218,33 @@ function fun11(x) {
     if (x <= 1) {
         return x;
     }
-    return fun11(x-1)*x;
+    return fun11(x - 1) * x;
 }
+
 console.log(fun11(3));
 
 // 중첩함수 - 함수 내부에 정의된 함수
 // 일반적인 경우 중첩함수는 함수 내부에서만 호출 가능
-function fun12(y){
+function fun12(y) {
     let i = y;
-    function inner(x){
+
+    function inner(x) {
         return x * 10;
     };
     return i + inner(10);
 }
+
 console.log(fun12(100));
 
 // 콜백함수 - 공통수행될 특정행위의 일부분을 변경할 경우 사용(예를들어 반복이라는 행위의 일부분을 변경해야 하는 경우)
 // 공통 로직을 정의하고 변경 로직은 추상화해 함수 외부에서 내부로 전달
 // 고차함수 - 매개변수 통해 함수의 외부에서 콜백 함수를 전달받은 고차 함수
-let inF1 = (x) => { return x * 10; }; // 콜백함수
-let inF2 = (x) => { return x * 5; }; // 콜백함수
+let inF1 = (x) => {
+    return x * 10;
+}; // 콜백함수
+let inF2 = (x) => {
+    return x * 5;
+}; // 콜백함수
 let repeat = (i1, f1) => (i2, f2) => { // 고차함수
     let result1 = 0;
     let result2 = 0;
@@ -235,6 +257,214 @@ let repeat = (i1, f1) => (i2, f2) => { // 고차함수
     console.log(result1, result2);
 };
 repeat(10, inF1)(20, inF2);
+
+// 순수함수 - 외부 상태에 의존 않고 변경 않는 부수효과 없는 함수
+// ... 동일 인수 전달시 결과값이 같다
+// ... 인수를 변경 하지 않으며, 외부 상태를 변경하지 않는다
+let fun15 = (x) => {
+    return ++x
+};
+console.log(fun15(10));
+
+// 비순수함수 - 부수 효과가 있는 함수
+// ... 외부 상태에 의존하거나 외부 상태를 변경하는 함수
+let bool1 = false;
+let fun16 = (x) => {
+    bool1 = x ? false : true;
+    console.log('toggle : ', bool1);
+};
+fun16(bool1);
+fun16(bool1);
+fun16(bool1);
+
+// 스코프 - 유효범위, 식별자를 검색할 때 사용되는 규칙
+// 모든 식별자는 선언 위치 따라 유효 범위가 결정
+// 식별자는 값을 구분해야 함으로 유일해야 한다, 하나의 값은 유일한 식별자에 연결 되어야 한다
+// 프로그래밍 언어는 스코프를 통해 변수 이름의 충돌을 방지한다
+// 스코프는 네임스페이스 - 같은 이름의 식별자를 서로 다른 스코프 범위에서 사용 가능
+// 전역스코프 - 코드의 가장 바깥 영역, 전역 변수가 선언되는 영역, 모든 영역에서 참조가능
+// 지역스코프 - 함수 몸체 내부, 지역 변수가 선언되는 영역, 지역변수는 자기자신 스코프와 하위스코프에서 유효
+// 스코프 체인 - 스코프가 계층적으로 연결된 구조
+// ... 변수 참조시 자기 자신 스코프부터 상위 스코프로 이동하며 식별자를 검색
+// ... 검색 우선 순위는 선언된 위치로 결정(자기 자신 스코프 -> 상위 스코프)
+// 렉시컬 스코프 - 참조 위치가 아닌 선언 위치로 상위 스코프가 결정
+// var 스코프 - 같은 스코프 내에서 중복 사용이 가능, 함수 레벨 스코프
+// let, const 스코프 - 키워드로 선언된 변수는 같은 스코프 내에서 중복 선언 불가, 블록 레벨 스코프
+// 함수 스코프 - 함수가 정의된 위치에 따라 상위 스코프 결정
+
+// var의 스코프 - var로 선언된 변수의 스코프는 함수 레벨 스코프를 가짐
+// ... var로 선언된 변수는 함수 블록 이외의 코드블록에서 선언시 전역 변수로서 선언된다
+var vv1 = true;
+if (true) {
+    var vv2 = true;
+    if (true) {
+        var vv3 = true;
+
+    }
+}
+var vv4 = false;
+
+function fun18() {
+    var vv4 = true;
+    console.log(vv4); // 함수 내부의 변수 참조
+}
+
+console.log(vv1, vv2, vv3);
+// console.log(vv4); // 참조 에러 발생
+fun18();
+console.log(vv4); // 함수 외부의 변수 참조
+
+// 함수 스코프 - 함수의 상위 스코프는 함수 정의시 정적으로 결정
+var vv5 = 'global';
+
+function f1() {
+    var vv5 = 'in function';
+    f2();
+}
+
+function f2() {
+    console.log(vv5);
+}
+
+f1();
+
+// 지역변수 생명주기 - 함수의 생명주기와 일치, 함수 종료시 소멸
+// 변수는 자신이 등록된 스코프가 소멸될 때까지 유효
+// 할당된 메모리 공간은 참조가 이뤄지지 않을때 해제
+// ... 스코프도 참조 당하지 않을 때 소멸
+
+// 전역 변수 생명주기
+// 명시적 호출 없이 바로 실행됨으로 더이상 실행할 문이 없을때 종료된다
+// 전역 변수의 생명 주기와 전역 객체의 생명 주기가 일치
+// 브라우저 환경에서 전역객체는 window 임으로 var 키워드로 선언한 변수는 전역객체 window의 프로퍼티
+// 전역변수 문제 - 모든코드가 접근가능하다, 긴 생명주기로 메모리소스 소비 크다,
+// ... 변수 검색시 검색 속도가 느리다, 서로 다른 파일에 존제하는 전역 변수가 같은 스코프 내에 존재할 수 있다
+// 전역변수 문제 해결 - 즉시실행함수 내부에서 지역변수로 사용,
+// ... 전역 네임스페이스에 사용할 변수를 프로퍼티로 추가, 모듈패턴
+// ES6 모듈 - 파일의 독자적인 모듈 스코프를 제공해 var로 선언된 변수가 전역변수가 아니며 window 객체의 프로퍼티가 아니게 된다
+
+// var 키워드 - 변수중복선언 허용, 함수레벨스코프, 변수호이스팅(선언단계와 초기화단계가동시에)
+// (선언 + 초기화) -> 할당
+// var로 선언된 변수는 런타임 이전에 undefined 으로 초기화
+// ... 이는 함수 내부의 변수에도 적용되며 호이스팅도 적용됨
+// ... 호이스팅은 스코프 단위로 동작함을 확인
+// 브라우저 환경에서 var로 선언시 window 객체의 프로퍼티가 되며,
+// ... window의 프로퍼티로 변수에 접근 가능하고 window. 을 생략해도 접근 가능
+var vv6 = 'vv66666';
+var vv6 = 'vv6';
+
+function f3() {
+    console.log(vv6);
+    var vv6 = 'in_vv6';
+}
+
+f3();// undefined
+console.log(vv6);// vv6
+
+// let 키워드 - 변수중복선언 불가, 블록레벨스코프, 변수호이스팅(선언단계와 초기화단계가 분리)
+// (선언 + TDZ) -> 초기화 -> 할당
+// 브라우저 환경에서 let 키워드로 전역 변수 선언시 window.변수 형태로 접근 불가
+let vv7 = 'vv77';
+{
+    // console.log(vv7); // 호이스팅에 의해 전역 변수가 아닌 같은 블록 내부의 변수에 접근을 시도하나 변수가 TDZ에 있어 에러
+    let vv6 = null; // 블록 외부에 선언시 중복 선언됨으로 에러
+    let vv7;
+    console.log(vv7); // 접근가능, undifined
+}
+
+// const 키워드 - 상수 선언을 위해 주로 사용, 반드시 선언과 동시에 초기화, 재할당 금지
+// ... 원시값 할당시 원시값은 변경 불가하고, const는 재할당이 금지됨으로 상수처럼 사용가능
+// ... 상수로써 키워드 사용시 스네이크 케이스로 표현
+// ... 객체 할당시 값 변경 가능
+const VALUE_V1 = 'vv88';
+{
+    // const vv9; // 에러, 선언과 동시에 초기화 필요
+    // console.log(VALUE_V1); // 에러, let 과 마찬가지로 호이스팅이 블록 단위로 발생
+    const VALUE_V1 = 10;
+    console.log(VALUE_V1);
+    // VALUE_V1 = null; // 에러, 재할당 불가
+    // console.log(++VALUE_V1); // 에러
+}
+// 값 변경 - 재할당은 금지되나 객체는 불변값이 아님으로 객체의 프로퍼티 수정 가능
+const OBJ_1 = {v: 0};
+OBJ_1.v = 1;
+console.log(OBJ_1);
+
+// 객체 변경 방지 - 프로퍼티의 변경 강도를 달리한다,
+// ... 중첩 객체에 적용 안됨으로 모든 프로퍼티를 재귀적으로 호출하여 적용할 필요가 있다
+// Object.preventExtensions - 프로퍼티의 추가X,삭제O,읽기O,쓰기O,재정의O
+// Ojbect.seel - 프로퍼티의 추가X,삭제X,읽기O,쓰기O,재정의X
+// Object.freeze - 프로퍼티의 추가X,삭제X,읽기O,쓰기X,재정의X
+
+// 객체 확장 금지 - 프로퍼티 추가만 불가, 정의에 의한 추가도 불가, 삭제 가능
+const OBJ_2 = {v: 'OBJ_2'};
+Object.preventExtensions(OBJ_2);
+console.log(Object.isExtensible(OBJ_2)); // false
+delete OBJ_2.v; // 가능
+console.log(OBJ_2); // {}
+
+// 객체 밀봉 - 읽기와 쓰기만 가능
+const OBJ_3 = {v: 'OBJ_3'};
+Object.seal(OBJ_3);
+console.log(Object.isSealed(OBJ_3)); // true
+console.log(OBJ_3);
+
+// 객체 동결 - 읽기만 가능
+const OBJ_4 = {v: 'OBJ_4'};
+Object.freeze(OBJ_4);
+console.log(Object.isFrozen(OBJ_4)); // true
+console.log(OBJ_4);
+
+// 생성자 함수 - new 연산자와 함께 호출해 인스턴스를 생성하는 함수
+// Object 생성자 함수 - new 연산자 호출시 빈 객체가 생성되어 반환
+let obj15 = new Object();
+obj15.v = 'obj15';
+obj15.f = function () {
+    console.log(this.v)
+};
+obj15.f();
+
+// 객체 리터럴로 객체 생성
+// 프로퍼티는 다를 수 있으나 매서드가 같을 수 있어 비효율 발생
+let obj16 = {
+    name: 'obj16',
+    name() {
+        console.log(this.name);
+    }
+};
+let obj17 = {
+    name: 'obj17',
+    name() {
+        console.log(this.name);
+    }
+};
+
+
+// 생성자 함수로 객체 생성 - 동일한 프로퍼티 구조의 인스턴스 생성 위한 탬플릿, 생성 인스턴스 초기화
+// 동일 구조의 객체를 new 키워드를 사용해 인스턴스 생성 가능
+// 함수를 new 연산자와 함께 호출해야 해당 함수는 생성자 함수로 동작
+// ... 암묵적으로 인스턴스가 생성되어 반환 및 this 바인딩
+// ... 함수 내부에서 this 바인딩 이후 this에 바인딩 되어있는 인스턴스가 초기화 된다
+function Person(name,age){
+    this.name = name || 'default_name';
+    this.age = age || 10;
+    this.info = function(){
+        console.log('name : ',this.name, ' \n age : ', this.age);
+    }
+}
+let p1 = new Person();
+let p2 = new Person('lee',30);
+p1.info();
+p2.info();
+
+
+
+
+
+
+
+
+
 
 
 
