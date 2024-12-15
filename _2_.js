@@ -1,3 +1,4 @@
+
 // 변수에 원시값 할당시 - 변수 -> 스택메모리주소 -> 원시값
 // 변수에 객체 할당시 - 변수 -> 스택메모리주소 -> 참조값(힙주소) -> 객체값
 // 원시값도 예외적으로 힙영역에 저장되는 경우 있으나 값 자체는 여전히 불변
@@ -167,6 +168,74 @@ fun6(1);
 // ... this 바인딩 방식 다르고, prototype 프로퍼티 없고, arguments 객체 생성 않는다
 let fun7 = (x) => (y) => (z) => console.log('fun7',x,y,z);
 fun7(1)(2)(3);
+
+// 함수의 반환문 - 함수의 실행중단, 리턴값 미명시시 undefined 반환, 반환문 생략시 undenined 반환
+// 리턴문 이후 줄바꿈이 있다면 자동으로 세미콜론이 삽입
+let fun8 = () => {
+    return
+    throw Error()
+};
+console.log(fun8()); // undefined
+
+// 원시값은 그대로지만 객체는 원본이 훼손된다
+function fun9(num,obj){
+    num += 100;
+    obj.name = 'lee';
+}
+let num3 = 0;
+let str2 = {name:'kim'};
+fun9(num3,str2);
+console.log(num3,str2);
+
+// 함수 선언문이 끝나는 위치에 세미콜론이 자동삽입 됨으로즉시 실행 함수는 그룹 연산자로 감싸야 한다
+// 익명 즉시 실행 함수
+(function() {console.log('now')}());
+// 기명 즉시 실행 함수
+(function fun10(){console.log("fun10")}());
+// 즉시 실행 함수 예시
+(function () {console.log('f1')})();
+!function(){console.log('f2')}();
++function(){console.log('f3')}();
+
+// 재귀 함수 - 자기 자신을 호출하는 함수
+// 탈출 조건 없다면 스택 오버플로 에러 발생
+function fun11(x) {
+    if (x <= 1) {
+        return x;
+    }
+    return fun11(x-1)*x;
+}
+console.log(fun11(3));
+
+// 중첩함수 - 함수 내부에 정의된 함수
+// 일반적인 경우 중첩함수는 함수 내부에서만 호출 가능
+function fun12(y){
+    let i = y;
+    function inner(x){
+        return x * 10;
+    };
+    return i + inner(10);
+}
+console.log(fun12(100));
+
+// 콜백함수 - 공통수행될 특정행위의 일부분을 변경할 경우 사용(예를들어 반복이라는 행위의 일부분을 변경해야 하는 경우)
+// 공통 로직을 정의하고 변경 로직은 추상화해 함수 외부에서 내부로 전달
+// 고차함수 - 매개변수 통해 함수의 외부에서 콜백 함수를 전달받은 고차 함수
+let inF1 = (x) => { return x * 10; }; // 콜백함수
+let inF2 = (x) => { return x * 5; }; // 콜백함수
+let repeat = (i1, f1) => (i2, f2) => { // 고차함수
+    let result1 = 0;
+    let result2 = 0;
+    for (let i = 0; i <= i1; i++) {
+        result1 += f1(i);
+    }
+    for (let i = 0; i <= i2; i++) {
+        result2 -= f2(i);
+    }
+    console.log(result1, result2);
+};
+repeat(10, inF1)(20, inF2);
+
 
 
 
