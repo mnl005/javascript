@@ -511,6 +511,20 @@ const dec = decodeURI(uri);
 console.log(enc);
 console.log(dec);
 
+const uriComp = 'custom.com?name=한글&age=qwer&fff';
+let uriComp_enc = encodeURIComponent(uriComp);
+let uriComp_dec = decodeURIComponent(uriComp_enc);
+console.log(uriComp_enc,uriComp_dec);
+
+// 암묵적 전역 - 선언하지 않은 식별자에 값을 할당시 선언된 전역 변수처럼 동작하는 경우
+// ... 전역 객체의 프로퍼티로 추가되고 delete 로 삭제 가능
+
+// this - 자기자신이 속산 객체 또는 자기자신이 생성할 인스턴스를 가리키는 자기참조변수
+// ... this를 통해 자신이 속한 객체 또는 자신이 생성할 인스턴스의 프로퍼티나 메소드를 참조가능
+// ... this가 가리키는 값인 this 바인딩은 함수 호출에 의해 동적으로 결정
+// ... 자기 자신이 속한 객체 이름을 통해 참조하는 방식은 자신이 속한 객체의 생성 시점에 영향을 받음으로 this로 접근하는게 바람직하다
+// this 바인딩 - 식별자와 값을 연결하는 과정,
+
 
 
 
