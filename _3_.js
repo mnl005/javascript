@@ -425,8 +425,8 @@ console.log('---------------');
 console.log(new String('lee'));
 console.log(new Number(123));
 console.log(new Boolean(true));
-console.log(new Function('x','return x * 10'));
-console.log(new Array(1,2,3));
+console.log(new Function('x', 'return x * 10'));
+console.log(new Array(1, 2, 3));
 console.log(new RegExp('lee'));
 console.log(new Date());
 let str111 = new String('leee');
@@ -465,11 +465,11 @@ eval3();
 
 // isFinite - 전달받은 인수가 유한수인지 검사
 console.log(isFinite(1)); // true
-console.log(isFinite(0/0)); // false, NaN임으로
-console.log(isFinite(1/0)); // false, Infinity 임으로
+console.log(isFinite(0 / 0)); // false, NaN임으로
+console.log(isFinite(1 / 0)); // false, Infinity 임으로
 
 // isNaN - NaN인지 검사
-console.log(isNaN(0/0)); // true
+console.log(isNaN(0 / 0)); // true
 console.log(isNaN(undefined)); // true
 console.log(isNaN('qwer')); // true
 console.log(isNaN({})); // true
@@ -485,8 +485,8 @@ console.log(parseFloat('qwer 1234')); // NaN
 
 // parseInt - 문자열 인수를 정수로 해석
 console.log(parseInt('10')); // 4
-console.log(parseInt('10qwer',2)); // 2
-console.log(parseInt('10qwer',8)); // 8
+console.log(parseInt('10qwer', 2)); // 2
+console.log(parseInt('10qwer', 8)); // 8
 console.log(parseInt('f', 16)); // 16
 console.log(parseInt('0xf')); // 15 , 16진수는 가능하나 2진수리터럴과 8진수 리터럴은 진수를 반드시 추가해줘야 함
 
@@ -514,7 +514,7 @@ console.log(dec);
 const uriComp = 'custom.com?name=한글&age=qwer&fff';
 let uriComp_enc = encodeURIComponent(uriComp);
 let uriComp_dec = decodeURIComponent(uriComp_enc);
-console.log(uriComp_enc,uriComp_dec);
+console.log(uriComp_enc, uriComp_dec);
 
 // 암묵적 전역 - 선언하지 않은 식별자에 값을 할당시 선언된 전역 변수처럼 동작하는 경우
 // ... 전역 객체의 프로퍼티로 추가되고 delete 로 삭제 가능
@@ -523,7 +523,65 @@ console.log(uriComp_enc,uriComp_dec);
 // ... this를 통해 자신이 속한 객체 또는 자신이 생성할 인스턴스의 프로퍼티나 메소드를 참조가능
 // ... this가 가리키는 값인 this 바인딩은 함수 호출에 의해 동적으로 결정
 // ... 자기 자신이 속한 객체 이름을 통해 참조하는 방식은 자신이 속한 객체의 생성 시점에 영향을 받음으로 this로 접근하는게 바람직하다
-// this 바인딩 - 식별자와 값을 연결하는 과정,
+// this 바인딩 - 식별자와 값을 연결하는 과정, this와 this가 가리킬 객체를 바인딩, 상황에 따라 가리키는 대상이 다르다
+// 엄격모드의 this는 일반 함수 내부에서 undefined가 바인딩
+// 일반함수의 this는 함수를 호출한 객체에 의해 결정
+// 화살표함수의 this는 정의한 위치의 상위스코프에 의해 결정
+
+// 화살표 함수와 일반 함수의 this 바인딩 차이
+let fun_this = function(){
+    this.value1 = 0;
+    this.in =  {
+        value1: 1,
+        fun1: function () {
+            console.log(this.value1); // 일반함수의 this는 호출된 객체를 참조
+        },
+        fun2: () => {
+            console.log(this.value1); // 화살표 함수의 this는 정의된 스코프를 참조
+        }
+    }
+};
+let ins1 = new fun_this();
+ins1.in.fun1(); // 1
+ins1.in.fun2(); // 0
+
+// 함수의 상위스코프를 결정하는 방식인 렉시컬 스코프는 함수 정의가 평가되어 함수 객체가 생성되는 시점에 결정
+// this 바인딩은 함수 호출 시점에 결정
+let q1 = function(){
+    console.log(this);
+}
+q1(); // undefined - 일반 함수로서 사용, 엄격모드 아닐때 전역객체인 window 또는 global을 가리킨다
+new q1(); // q1 { } - 생성자 함수로서 사용
+let q1_ob1= {q1:q1};
+q1_ob1.q1(); // { q1: [Function: q1] }- 메서드 호출로 사용
+let q2 = {name:'q2'};
+q1.call(q2); // { name: 'q2' } - 간접 호출
+q1.apply(q2); // { name: 'q2' } - 간접 호출
+q1.bind(q2)(); // { name: 'q2' }  - 간접 호출
+
+console.log('----------');
+// 엄격모드 아닐시 일반함수로서 호출된 모든 함수의 this는 전역 객체를 가리킨다
+let q3 = {
+    q2_in1(){
+
+        console.log(this);
+
+        function q2_in1_in1(){
+            console.log(this);
+        };
+
+        q2_in1_in1();  // undefined - 일반 함수로서 호출
+
+        new q2_in1_in1();  // q2_in1_in1 {} - 생성자 함수로서 호출
+
+        setTimeout(function(){
+            console.log(this); // Timeout{...} - 엄격모드라 그런가 ??
+        },1);
+
+    }
+}
+q3.q2_in1(); // { q2_in1: [Function: q2_in1] } - 객체의 메서드로서 호출
+
 
 
 
