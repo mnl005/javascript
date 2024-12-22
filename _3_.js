@@ -875,7 +875,7 @@ let save_lex = lex();
 save_lex(); // 0
 
 // 클로저의 활용 - 변수를 은닉하여 의도지 않은 변경을 방지
-let lex2 = (function(){
+let lex2 = (function () {
     let hidden = 0;
     return function () {
         console.log(++hidden);
@@ -887,14 +887,16 @@ lex2(); // 2
 lex2(); // 3
 
 // 생성자 함수의 클로저
-let lex3 = (function(){
+let lex3 = (function () {
     let hidden = 0;
-    function lex3(){};
-    lex3.prototype.plus = function(){
+
+    function lex3() {
+    };
+    lex3.prototype.plus = function () {
         ++hidden;
         console.log(hidden);
     };
-    lex3.prototype.minus = function(){
+    lex3.prototype.minus = function () {
         --hidden;
         console.log(hidden);
     };
@@ -907,16 +909,21 @@ lex3_ins.plus(); // 3
 console.log('------------------');
 // 함수형 프로그래밍의 클로저
 // lex4로부터 함수가 반환될 때마다 새로운 렉시컬 환경이 생성
-function lex4(aux){
+function lex4(aux) {
     let num = 1;
-    return function(){
+    return function () {
         num = aux(num);
         console.log(num);
         return num;
     };
 }
-const lex4_1 = lex4((x) => {return ++x;});
-const lex4_2 = lex4((x) => {return x *= 10;});
+
+const lex4_1 = lex4((x) => {
+    return ++x;
+});
+const lex4_2 = lex4((x) => {
+    return x *= 10;
+});
 lex4_1(); // 2
 lex4_1(); // 3
 lex4_1(); //4
@@ -925,28 +932,35 @@ lex4_2(); // 100
 lex4_2(); // 1000
 
 // 같은 렉시컬 환경을 공유
-let lex5 = (function() {
+let lex5 = (function () {
     let num = 1;
-    return function(aux) {
+    return function (aux) {
         num = aux(num);
         console.log(num);
         return num;
     };
 })();
-lex5((x) => { return x *= -10; }); // -10
-lex5((x) => { return x *= -10; }); // 100
-lex5((x) => { return x *= -10; }); // -1000
+lex5((x) => {
+    return x *= -10;
+}); // -10
+lex5((x) => {
+    return x *= -10;
+}); // 100
+lex5((x) => {
+    return x *= -10;
+}); // -1000
 
 // 캡슐화 - 객체의 상태를 나타네는 프로퍼티와 프로퍼티를 참조하고 조작하는 메서드를 묶은것
 // 은닉화 - 외부 공개 필요없는 구현의 일부를 감추어 접근을 방지해 정보를 보호하고 개체간 결합도를 낮춘다
 // 자바스크립트는 정보은닉을 완전하게 지원하지 않는다
-let lex6 = (function(){
+let lex6 = (function () {
     let _info1 = 'lex6';
-    function lex6(info1){
+
+    function lex6(info1) {
         _info1 = info1;
     };
-    lex6.prototype.get = function(){
-        console.log('_info : ',_info1);
+    lex6.prototype.get = function () {
+        console.log('_info : ', _info1);
     }
     return lex6;
 }());
@@ -957,11 +971,13 @@ lex6_1.get(); // lex6_2, 변경된 정보가 출력
 // 클로저 활용
 // let 키워드로 선언한 변수 사용시 for 문의 반복 실행마다 새로운 렉시컬 환경이 생성된다
 let lex7 = [];
-for(let i = 0; i <10; i++){
-    lex7[i] = function(){console.log(`lex7[${i}] : `,i);};
+for (let i = 0; i < 10; i++) {
+    lex7[i] = function () {
+        console.log(`lex7[${i}] : `, i);
+    };
 }
 console.log(lex7);
-for(let i = 0; i <10; i++){
+for (let i = 0; i < 10; i++) {
     lex7[i]();
 }
 
@@ -974,30 +990,213 @@ for(let i = 0; i <10; i++){
 // ... 생성자 함수가 객체를 생성하는 방식과 비교되는 새로운 객체 생성 메커니즘
 
 console.log('--------------------------------------------------------------------');
-// 클래스는  함수로 평가된다
+// 클래스는  함수로 평가되고, 함수 고유의 프로퍼티를 모두 가진다
 // 클래스는 런타임 이전 평가되어 함수 객체 생성, 이때 생성된 함수 객체는 constructor이고 생성자 함수이다, 프로토타입도 생성
 // 생성자 함수와는 다르게 정의 이전에 참조 불가, 호이스팅이 발생하나 let.const 키워드로 선언된 변수처럼 일시적 사각지대에 의해 정의 이전 접근 불가
 // 클래스 몸체에 정의 가능한 메서드는 constructor생성자.프로토타입메서드.정적메서드 3가지
-//
-// 클래스 정의
-class c1{};
-// 익명클래스
-let c2 = class{};
-// 기명 클래스
-let c3 = class cc{}; // 기명함수 클래스 이름인 cc는 외부 코드에서 접근 불가
-class c4 {
-    constructor(info) {
-        this.info = info; // public 프로퍼티
-    };
-    m1(){console.log(this.info);}; // 프로토타입 메서드
-    static m2(){console.log('static m2');}; // 정적 메서드
+// 클래스에 정의한 constructor은 메서드로 해석되는게 아닌 클래스가 평가되어 생성한 함수 객체 코드의 일부가 된다
+// ... 클래스 정의가 평가되면 constructor의 기술된 동작을 하는 함수 객체가 생성된다
+// ... 프로토타입의 constructor과 클래스의 constructor은 직접적인 관련이 없다
+// 클래스의 constructor은 클래스 내에 최대 한개만 존재 가능하고 생략 가능하며 생량시 암묵적으로 constructor이 정의
+// ... constructor 생략한 클래스는 인스턴스 생성시 빈 constructor에 의해 빈 객체를 생성
+// ... 클래스로 인스턴스 생성시 생성할 인스턴스의 프로퍼티 설정하려면 constructor 내부에서 this로 프로퍼티를 추가
+// ... constructor은 반환문을 갖지 않아야 한다, 만약 반환문으로 명시적으로 객체를 리턴시 암묵적인 this 반환이 무시되고 반환값이 리턴된다
+// ... 반환문으로 명시적으로 원시값 리턴시 원시값 반환이 무시되고 암묵적으로 this가 리턴
+// 클래스 몸체에 정의한 메서드는 클래스로 생성한 인스턴스의 프로토타입에 존재하는 프로토타입의 메서드가 된다, 인스턴스는 프로토타입 메서드를 상속받아 사용 가능
+// ... 클래스는 생성자 함수처럼 프로토타입 기반의 객체 생성 메커니즘이다
+// 클래스의 정적 메서드는 클래스로 생성한 인스턴스의 프로토타입 체인상 존재하지 않기 때문에 인스턴스에서 클래스의 정적 메서드 사용 불가
+// ... 정적 메서드와 프로토타입 메서드는 자신이 속해있는 프로토타입 체인이 다르다, 내부의 this 바인딩이 다름
+// ... 정적 메서드는 클래스로 호출하고 프로토타입 메서드는 인스턴스로 호출
+// ... 정적 메서드는 인스턴스 프로퍼티를 참조할 수 없지만 프로토타입 메서드는 인스턴스 프로퍼티를 참조 가능
+// 클래스에서 정의한 메서드 특징 - function키워드 생략한 축약표현, 콤마필요없음, 엄격모드실행, 열거불가, 클래스의 내부 메서드는 non-constructor이다
+// 인스턴스의 프로퍼티는 항상 public하다
+// 접근자 프로퍼티 - 객체의 속성에 값을 직접 저장하지 않고 값을 가져오거나 설정할 때 실행되는 함수로 정의된 프로퍼티
+// 클래스 필드는 간단한 값 초기화시 사용
+// 클래스 필드에 함수 할당시 프로토타입 메서드가 아닌 인스턴스 메서드가 됨으로 권장되지 않는다
+
+// ** 인스턴스 생성과정 **
+// 1. 인스턴스 생성과 this 바인딩
+// ... new 연산자와 함께 클래스 호출시 constructor의 내부 코드가 실행되며 암묵적으로 빈 객체가 생성되고 이 빈 객체가 클래스가 생성한 인스턴스
+// ... 클래스가 생성한 인스턴스의 프로토타입으로 클래스의 prototype 프로퍼티가 가리키는 객체가 생성
+// ... 암묵적으로 생성된 빈 객체인 인스턴스는 this에 바인딩되어 constructor 내부의 this는 클래스가 생성한 인스턴스를 가리킴
+// 2. 인스턴스 초기화
+// ... constructor 내부의 코드가 실행되어 this에 바인딩되어있는 인스턴스를 초기화, this에 바인딩된 인스턴스에 프로퍼티 추가하고 constructor가 전달받은 초기값으로 인스턴스 프로퍼티 초기화
+// ... constructor이 생략되었다면 해당 과정도 생략
+// 3. 인스턴스 변환
+// ... 클래스의 모든 처리가 끝나면 완성된 인스턴스와 바인딩된 this가 암묵적으로 반환
+
+class c1 {
 };
-c4.m2(); // 스테틱 메서드 사용, 인스턴스 생성 없이 바로 사용 가능
-let c4_ins = new c4('c4_ins'); // 인스턴스 생성, new 키워드 없다면 에러 발생
+// 익명클래스
+let c2 = class {
+};
+// 기명 클래스
+let c3 = class cc {
+}; // 기명함수 클래스 이름인 cc는 외부 코드에서 접근 불가
+class c4 {
+    // 인스턴스의 접근자로 접근 불가한 클래스 필드
+    #info;
+    // 인스턴스의 접근자로 접근 가능한 클래스 필드
+    name;
+    // 인스턴스에서 접근 가능한 클래스 필드의 메소드
+    m5 = function () {
+        console.log('class 메소드');
+    }
+
+    // 인스턴스에서 접근 불가한 정적 메서드
+    static static_m1() {
+        console.log('static m2');
+    }
+
+    // 인스턴스에서 접근 불가한 정적 필드
+    static st_field = 'st_field';
+
+
+    constructor(info, name, ins) {
+        // 클래스필드 초기화
+        this.#info = info;
+        // 클래스필드 초기화
+        this.name = name;
+        // 인스턴스 필드 초기화
+        this.instance_field = ins;
+    }
+
+    // getter
+    get get_info() {
+        return this.#info; // 내부 변수 반환
+    }
+
+    // setter
+    set set_info(info) {
+        this.#info = info; // 내부 변수에 값 할당
+    }
+
+    // 프로토타입 메서드
+    m1() {
+        console.log(this.get_info); // getter를 통해 _info 접근
+    }
+
+    // 프로토타입 메서드
+    m2(info) {
+        this.set_info = info // setter을 통해 _info 접근
+    }
+
+    // 프로토타입 메서드
+    m3() {
+        console.log(this.name);
+    }
+
+    // 프로토타입 메서드
+    m4() {
+        console.log(this.instance_field);
+    }
+
+
+}
+
+c4.static_m1(); // 스테틱 메서드 사용, 인스턴스 생성 없이 바로 사용 가능
+console.log(c4.st_field); // 스태틱 필드 참조, 인스턴스 생성 없이 바로 사용 가능
+console.log('c4.name', c4.name);// ???
+// c4.m5(); // 접근불가
+let c4_ins = new c4('c4_ins', 'eeeee', 'insssss'); // 인스턴스 생성, new 키워드 없다면 에러 발생
 c4_ins.m1();
+c4_ins.m2('qwer1234');
+c4_ins.m1();
+c4_ins.m3();
+c4_ins.m4();
+c4_ins.m5();
+console.log(c4_ins.instance_field); // 직접 접근 가능
+console.log(c4_ins.name); // 직접 접근 가능
+// console.log(c4_ins.#info); // 직접 접근 불가
 
 
+function ccc() {
+};
+console.log(ccc.prototype.constructor === ccc); // true
+console.log(c4.prototype.constructor === c4); // true
+console.log(c4_ins.__proto__ === c4.prototype); // true
+console.log(c4_ins.constructor === c4); // true
+console.log(c4.prototype.__proto__ === Object.prototype); // true
+console.log(c4_ins.__proto__.__proto__ === Object.prototype); // true
+console.log(c4.constructor.__proto__ === Function.prototype); // true
 
+// 프로토타입 기반 상속 - 프로토타입 체인을 통해 다른 객체의 자산을 상속
+// 클래스 상속 - 상속에 의한 클래스 확장은 기존 클래스를 상속받아 새로운 클래스를 확장하여 정의
+// extends - 상속받을 클래스를 정의, 서브클래스-수퍼클래스, 파생클래스-베이스클래스, 자식클래스-부모클래스
+// 클래스의 상속도 프로토타입을 통해 상속 관계를 구현
+// ... 서로 인스턴스의 프로토타입 체인과 클래스간 프로토타입체인도 생성함으로 프로토타입메서드,정적메서드 모두 상속 가능
+// extends 키워드로 생성자 함수를 상속받아 클래스 확장 가능
+// extends 키워드 다음에 [[Constructor]] 내부 메서드를 갖는 함수 객체로 평가될 수 있는 모든 표현식을 사용 가능, 동적으로 상속받을 대상을 결정 하능
+class c5 {
+    constructor(info1,info2) { // constructor을 따로 정의하지 않아도 암묵적으로 constructor(){} 형테로 constructor이 정의된다
+        this.info1 =info1;
+        this.info2 = info2;
+    }
+    m1(){console.log(this.info1);}
+    static static_m2(){console.log('static_m2');}
+}
+class c5_ex extends (true ? c5 : Object){ // 조건에 따라 동적으로 상속받을 클래스 결정
+    // constructor(...args) { super{...args) } // 자식 클래스에 암묵적으로 해당 생성자가 정의된다, args는 new 연산자와 함께 클래스 호출시 전달한 인수의 리스트
+    m2(){console.log(this.info2);}
+}
+c5_ex.static_m2(); // static_m2
+let c5_ins1 = new c5_ex('1234','qwer');
+c5_ins1.m1(); // 1234
+c5_ins1.m2(); // qwer
+console.log(c5_ins1.constructor === c5_ex); // true
+console.log(c5_ins1.__proto__ === c5_ex.prototype); // true
+console.log(c5_ins1 instanceof c5_ex); // true
+console.log(c5_ins1 instanceof c5); // true
+
+// super 키워드 - 함수처럼 호출 가능하고 this와 같이 식별자처럼 참조 가능한 특수한 키워드
+// ... super 호출시 수퍼클래스의 constructor를 호출한다
+// ... super을 참조하면 수퍼클래스의 메서드를 호출 가능
+// 서브 클래스에서 constructor을 생략하지 않은 경우 반드시 super을 호출해야 한다
+// ... super 호출 전 this로 상위 클래스의 인스턴스 프로퍼티 참조 불가
+// ... super은 반드시 서브 클래스의 constructor 내부에서 호출해야 한다
+// 서브클래스는 자신이 직접 인스턴스 생성하지 않고 수퍼클래스에게 인스턴스 생성을 위임한다
+// ... 인스턴스는 수퍼클래스가 생성하나 new 연산자와 함께 호출하는건 서브클래스임으로 인스턴스는 new.target가 가리키는 서브클래스가 생성한 것으로 처리
+// ... 따라서 생성된 인스턴스의 프로토타입은 서브클래스의 prototype 프로퍼티가 가리키는 객체다
+// 서브클래스의 constructor에서 super 미호출시 인스턴스가 생성 안되며 this 바인딩도 불가
+class c6 {
+    constructor(a) {
+        this.a = a;
+        console.log('this : ',this); //c6_ex { a: 1 }
+        console.log('new.target : ',new.target); //  [class c6_ex extends c6]
+    }
+    m1(){console.log('c6 m1');}
+}
+class c6_ex extends c6{
+    constructor(a,b) {
+        // this.a = 0; // 접근불가
+        super(a); // 한칸  밑으로 내리면 에러발생
+        this.b = b;
+        console.log('c6_EX_THIS : ',this); // super가 반환한 인스턴스가 this에 바인딩, super 이전에 this에 접근불가
+    }
+    m1(){ // ES6의 축약표현으로 정의된 함수만이 [[HomeObject]] 를 가지며, 이걸 가지는 함수만이 super로 부모의 함수를 불러올 수 있다
+        return super.m1(); // 부모클래스의 m1을 호출
+    }
+}
+let c6_ins = new c6_ex(1,2);
+console.log(c6_ins); // c6_ex { a: 1, b: 2 }
+c6_ins.m1();
+console.log(c6_ins instanceof c6_ex); // true
+console.log(c6_ins instanceof c6); // true
+console.log(c6_ins.__proto__ === c6_ex.prototype); // true
+console.log(c6_ins.constructor === c6_ex); // true
+console.log(c6_ins.__proto__ === c6.prototype); // false
+
+// 표준 빌트인 생성자 함수 확장
+class Arr_custom extends Array{
+    static uniq(arr){
+        console.log(arr.filter((x,y,z) => z.indexOf(x) === y));
+    }
+    static average(arr){
+        console.log(arr.reduce((x,y) => x + y, 0) / arr.length);
+    }
+}
+Arr_custom.uniq([1,2,3,1,2]); // 1,2,3
+Arr_custom.average([0,100]); // 50
 
 
 
