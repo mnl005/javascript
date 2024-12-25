@@ -144,14 +144,16 @@ function custom() {
     this.name = 'custom'
 };
 let cus = new custom();
-console.log(custom.prototype);
+console.log(custom.prototype); // {}
 console.log(cus.constructor === custom); // true
 console.log(cus.constructor.prototype === custom.prototype); // true
 console.log(cus.__proto__ === custom.prototype); // true
 
-console.log(custom.prototype.__proto__ === Object.prototype);
+console.log('-----------------33-------------------');
+console.log(custom.prototype.__proto__ === Object.prototype); // true
 console.log(custom.constructor === Function); //true
 console.log(custom.constructor.prototype === Function.prototype); // true
+console.log(custom.prototype.constructor === custom); // true
 console.log(custom.__proto__ === Function.prototype); // true
 
 
