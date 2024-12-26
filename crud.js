@@ -1,262 +1,245 @@
-class DB {
-    // 세션 초기화
-    static session_reset() {
-        sessionStorage.clear();
+class TE1000 extends AView {
+    constructor() {
+        super()
+
+        this.contiKey = '';
     }
 
-    // 검색결과 임시저장
-    static search_value = [];
+    init(context, evtListener) {
+        super.init(context, evtListener)
 
-    // num값 자동증가
-    static #num_set() {
+        this.createCkEditor(this.noticeContent.element);
+    }
 
-        // 세션에서 num 불러오기
-        let num = sessionStorage.getItem('num');
+    onInitDone() {
+        super.onInitDone()
 
-        // num이 아직 세션에 저장되지 않았다면 1로 저장후 1리턴
-        if (num === null) {
-            sessionStorage.setItem('num', 1);
-            return 1;
+
+        //TODO:edit here
+
+    }
+
+    // CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM
+
+    onActiveDone(isFirst) {
+        super.onActiveDone(isFirst)
+
+    }
+
+    // 뷰갱신
+    grid_data_re() {
+
+        // 그리드뷰 리셋
+        this.data_grid.removeAll();
+        let radio = this.radio_group.getSelectIndex() - 1;
+
+        // 날짜
+        let date1 = this.date1.childComp.date.year + this.date1.childComp.date.month + this.date1.childComp.date.day;
+        let date2 = this.date2.childComp.date.year + this.date2.childComp.date.month + this.date2.childComp.date.day;
+        console.log(radio, date1, date2);
+
+
+        theApp.qm.sendProcessByName('TE1000', this.getContainerId(), null,
+            function (queryData) { // InBlock 설정
+                const inblock1 = queryData.getBlockData('InBlock1')[0];
+                inblock1.notice_type = `${radio}`;
+                inblock1.start_date = `${date1}`;
+                inblock1.end_date = `${date2}`;
+                console.log('공지사항 조회 in : ', inblock1);
+            },
+            function (queryData) { // OutBlock 처리
+                const errorData = this.getLastError();
+                if (errorData.errFlag == "E") {
+                    console.log("Error Data:", errorData);
+                    AToast.show('에러가 발생했습니다.');
+                    return;
+                }
+
+                const outblock1 = queryData.getBlockData('OutBlock1');
+                console.log('공지사항 조회 out : ', outblock1);
+            });
+    }
+
+    // 빈값 검사
+    value_check() {
+        let title_check = this.title.getText();
+        let notice_content = this.noticeContent.getData().replace(/<\/?[^>]+(>|$)/g, "");
+        if (!title_check || !notice_content) {
+            AToast.show('제목 또는 내용을 입력하세요');
+            return false;
         }
 
-        // 이미 있다면 1 증가된 num을 세션에 저장하고 증가된 값을 리턴
-        else {
-            num = Number(num);
-            sessionStorage.setItem('num', ++num);
-            return num;
-        }
+    }
 
-    };
 
-    // 게시글 구조 생성 함수 - num이 유효하지 않은 값이면 새로운 게시글 작성으로 판단
-    static #board(num, title, who, content) {
-        // 날짜 생성
-        let today = new Date();
-        let year = today.getFullYear();
-        let month = ('0' + (today.getMonth() + 1)).slice(-2);
-        let day = ('0' + today.getDate()).slice(-2);
-        let hours = ('0' + today.getHours()).slice(-2);
-        let minutes = ('0' + today.getMinutes()).slice(-2);
-        let time = `${year}-${month}-${day} ${hours}:${minutes}`;
+    // CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM CUSTOM
 
-        // 필드 미 입력시 에러
-        if (!title || !who || !content) {
-            throw new Error('모든 필드를 입력해야 합니다.');
-        }
+    // ?
+    createCkEditor(target) {
+        return ClassicEditor.create(target, {
+            language: 'ko',
+            extraPlugins: [customUploadAdapterPlugin],
+        })
+            .then(editor => {
+                editor.editing.view.change(writer => writer.setStyle('height', '200px', editor.editing.view.document.getRoot()))
+                this.noticeContent = editor;
+            })
+            .catch(console.error);
 
-        // 모든 num, date 제외한 모든 필드는 문자열로 저장
-        return (typeof num !== 'number' || num === null) ?
-            {
-                num: this.#num_set(),
-                title:String(title),
-                who:String(who),
-                content:String(content),
-                date: time
-            }
-            :
-            {
-                num: num,
-                title:String(title),
-                who:String(who),
-                content:String(content),
-                date: '!' + time
+        function customUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return new UploadAdapter(loader, `${config.SERVER_ADDRESS}:${config.SERVER_PORT}/upload`);
             };
-    };
-
-    // board 세션 에 데이터 추가
-    static #save(board) {
-
-        // data가 배열인지 확인
-        if (!Array.isArray(board)) board = [];
-
-        // 갱신된 데이터 세션에 반영
-        console.log('save-data',board);
-        sessionStorage.setItem('board', JSON.stringify(board));
-    };
-
-    // board 세션의 모든 데이터 불러오기
-    static #read() {
-
-        // 데이터 불러오기, null값일 경우 빈배열 반환
-        let data = JSON.parse(sessionStorage.getItem('board')) || [];
-
-        // 리턴
-        console.log('read-data',data);
-        return data;
-
+        }
     }
 
 
-    // create
-    static create(title, who, content) {
+    // 공지사항 조회 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    data_select(comp, info, e) {
+        // 갱신
+        this.grid_data_re();
+    }
 
-        // 세션의 데이터 불러오기
-        let data = this.#read();
+    //공지사항 추가 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    data_create(comp, info, e) {
+        let this_obj = this;
+        theApp.qm.sendProcessByName('TE1011', this.getContainerId(), null,
+            function (queryData) {
 
-        // 새롭게 작성된 게시글
-        let new_board = this.#board(null, title, who, content);
+                // 빈값 검사
+                if (this.value_check()) {
+                    const inblock1 = queryData.getBlockData('InBlock1')[0];
+                    inblock1.notice_content = this_obj.noticeContent.getData().replace(/<\/?[^>]+(>|$)/g, "");
+                    console.log('공지사항 추가 in : ', inblock1);
+                }
+                ;
 
-        // 기존 데이터에 생성내용 반영
-        data.push(new_board);
 
-        // 반영된 데이터 세션에 갱신
-        this.#save(data);
+            },
+            function (queryData) { // OutBlock 처리
+                const errorData = this.getLastError();
+                if (errorData.errFlag == "E") {
+                    console.log("Error Data:", errorData);
+                    AToast.show('에러가 발생했습니다.');
+                    return;
+                }
 
-    };
 
-    // select - 전체조회
-    static select() {
-        // 세션의 데이터 불러오기
-        return this.#read();
-    };
+            });
 
-    // update
-    static update(num, title, who, content) {
+        // 갱신
+        this.grid_data_re();
+    }
 
-        // 세션의 데이터 불러오기
-        let data = this.#read();
 
-        // num에 해당하는 데이터의 인덱스
-        let index = data.findIndex(x => x.num === Number(num));
+    // 공지사항 선택조회 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    data_select_select(comp, info, e) {
 
-        // 잘못된 인덱스에 접근시
-        if(index === -1) {
-            console.warn(`유효하지 않은 인덱스에 update 접근 (num: ${num})`);
-            return;
-        };
 
-        // 업데이트 내용을 반영한 게시글 객체
-        let new_board = this.#board(num, title, who, content);
+        let this_obj = this;
+        let index = info.find('td:first').text();
+        theApp.qm.sendProcessByName('TE1010', this.getContainerId(), null,
+            function (queryData) {
+                // 보내기
+                const inblock1 = queryData.getBlockData('InBlock1')[0];
+                inblock1.notice_id = index;
+                console.log('공지사항 선택조회 in : ', inblock1);
 
-        // 기존 데이터에 생성내용 반영
-        data.splice(index, 1, new_board);
+            },
+            function (queryData) {
+                const errorData = this.getLastError();
+                if (errorData.errFlag == "E") {
+                    console.log("Error Data:", errorData);
+                    AToast.show('에러가 발생했습니다.');
+                    return;
+                }
 
-        // 반영된 데이터 세션에 갱신
-        this.#save(data);
-    };
+                const outblock1 = queryData.getBlockData('OutBlock1');
+                let content = outblock1[0].notice_content;
+                this_obj.noticeContent.setData(content);
 
-    // delete
-    static delete(num) {
+                console.log('공지사항 선택조회 out : ', outblock1);
 
-        // 세션의 데이터 불러오기
-        let data = this.#read();
+            });
 
-        // num에 해당하는 데이터의 인덱스
-        let index = data.findIndex(x => x.num === Number(num));
+    }
 
-        // 잘못된 인덱스에 접근시
-        if(index === -1) {
-            console.warn(`유효하지 않은 인덱스에 delete 접근 (num: ${num})`);
-            return;
-        };
+    // 공지사항 수정 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    data_update(comp, info, e) {
 
-        // 기존 데이터에 삭제 내용을 반영
-        data.splice(index, 1);
 
-        // 반영된 데이터 세션에 갱신
-        this.#save(data);
+        let this_obj = this;
+        theApp.qm.sendProcessByName('TE1012', this.getContainerId(), null,
+            function (queryData) {
 
-    };
+                // 빈값 검사
+                if (this.value_check()) {
+                    // 보내기
+                    const inblock1 = queryData.getBlockData('InBlock1')[0];
+                    inblock1.notice_content = this_obj.noticeContent.getData().replace(/<\/?[^>]+(>|$)/g, "");
+                    console.log('공지사항 수정 in : ', inblock1);
+                }
 
-    // search
-    static search(type, value) {
+            },
+            function (queryData) { // OutBlock 처리
+                const errorData = this.getLastError();
+                if (errorData.errFlag == "E") {
+                    console.log("Error Data:", errorData);
+                    AToast.show('에러가 발생했습니다.');
+                    return;
+                }
 
-        // 기존 데이터 불러오기
-        let data = this.#read();
+                const outblock1 = queryData.getBlockData('OutBlock1');
 
-        // 검색값이 유효하지 않다면 검색 결과 비우고 전체 데이터 리턴
-        if (!value || !value.trim()){
-            this.search_value = [];
-            return data;
-        }
 
-        switch (type) {
+                console.log('공지사항 수정 out : ', outblock1);
 
-            // num을 기준으로 정확한 검색 후 검색값 저장
-            case 0:
-                return this.search_value = data.filter(x => x.num === Number(value));
+            });
 
-            // title을 기준으로 검색 후 검색값 저장
-            case 1:
-                return this.search_value = data.filter(x => x.title.toLowerCase().includes(value.toLowerCase()));
+        // 갱신
+        this.grid_data_re();
+    }
 
-            // content를 기준으로 검색 후 검색값 저장
-            case 2:
-                return this.search_value = data.filter(x => x.content.toLowerCase().includes(value.toLowerCase()));
 
-            // who를 기준으로 정확한 검색 후 검색값 저장
-            case 3:
-                return this.search_value = data.filter(x => x.who === value);
+    // 공지사항 삭제 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    data_delete(comp, info, e) {
 
-            default:
-                return data;
 
-        }
-    };
+        let this_obj = this;
+        theApp.qm.sendProcessByName('TE1013', this.getContainerId(), null,
+            function (queryData) {
 
-    // sort
-    static sort(col1, col2) {
 
-        // 기존 데이터 불러오기
-        let data = this.#read();
+                const inblock1 = queryData.getBlockData('InBlock1')[0];
+                inblock1.notice_content = this_obj.noticeContent.getData().replace(/<\/?[^>]+(>|$)/g, "");
+                console.log('공지사항 삭제 in : ', inblock1);
 
-        // 검색결과가 존재한다면 검색 결과로 정렬 수행
-        if (this.search_value.length > 0) {
-            data = this.search_value;
-        }
+            },
+            function (queryData) {
 
-        switch (col1) {
+                const errorData = this.getLastError();
+                if (errorData.errFlag == "E") {
+                    console.log("Error Data:", errorData);
+                    AToast.show('에러가 발생했습니다.');
+                    return;
+                }
 
-            // num을 기준으로
-            case 0:
-                return (col2 === 0) ?
-                    data.sort((a, b) => a.num - b.num)
-                    : data.sort((a, b) => b.num - a.num);
+                const outblock1 = queryData.getBlockData('OutBlock1');
+                console.log('공지사항 삭제 out : ', outblock1);
 
-            // 제목을 기준으로 정렬
-            case 1:
-                return (col2 === 0)
-                    ? data.sort((a, b) => a.title.localeCompare(b.title))
-                    : data.sort((a, b) => b.title.localeCompare(a.title));
+            });
 
-            // 작성자를 기준으로
-            case 2:
-                return (col2 === 0)
-                    ? data.sort((a, b) => a.who.localeCompare(b.who))
-                    : data.sort((a, b) => b.who.localeCompare(a.who));
 
-            // 날짜를 기준으로
-            case 3:
-                return (col2 === 0)
-                    ? data.sort((a, b) => new Date(a.date) - new Date(b.date))
-                    : data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // 갱신
+        this.grid_data_re();
+    }
 
-            default:
-                return data;
-        }
 
-    };
 }
 
 
-window.DB = DB;
 
-// DB.create('title1','who1','content1');
-// DB.create('title2','who2','content2');
-// DB.create('title3','who3','content3');
-// DB.create('title4','who4','content4');
-// DB.create('title5','who5','content5');
-//
-// console.log('db.select',DB.select());
-//
-// DB.update(1,1111,2222,3333);
-// DB.update(2,4444,5555,6666);
-// DB.update(3,7777,8888,9999);
-//
-// console.log('db.select',DB.select());
-//
-// DB.delete(4);
-//
-// console.log('db.select',DB.select());
+
+
 
 

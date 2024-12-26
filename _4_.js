@@ -249,8 +249,8 @@ console.log( // filter - 조건이 true일때 요소 반환해 새로운 배열 
         .filter(x => x > 2)
 );
 console.log(// reduce - x를 0으로 초기값 설정하고 각 요소를 더해 하나의 결과 출력
-  [1,2,3,4,5]
-      .reduce((x,y,z,q) => x + y,0),
+    [1,2,3,4,5]
+        .reduce((x,y,z,q) => x + y,0),
     ['a','b','b','c','d','d','d']
         .reduce((x,y,z,q) => { // x는 결과, y는 요소, z는 요소의 인덱스, q는 인수로 받은 배열
             x[y] = (x[y] || 0) + 1;
@@ -325,27 +325,160 @@ console.log(
 );
 
 
+// Math - 정적 프로퍼티와 메서드만 제공
+console.log(
+    Math.PI, // 3.141592653589793
+    '\n',
+    Math.abs(-1), //  1 1 0 0 0 - 숫자를 절대값으로
+    '\n',
+    Math.round(1.1234), // 소수점 이하 반올림
+    '\n',
+    Math.ceil(1.6), // 소수점 이하  올림
+    '\n',
+    Math.floor(1.5), // 소수점 이하 내림
+    '\n',
+    Math.sqrt(9), // 인수의 제곱근
+    '\n',
+    Math.random(), // 0에서 1 사이의 난수
+    '\n',
+    Math.pow(2,3), // 2의 3제곱
+    '\n',
+    Math.max(1,2,3), // 인수중 가장 큰 수 하나, 인수 미 전달시 Infinity
+    '\n',
+    Math.min(1,2,3), // 인수중 가장 작은 수, 인수 미 전달시 Infinity
+);
 
 
+// Date - 자바스크립트의 코드가 실행된 시계에 의해 결정
+console.log(
+    new Date(), // 2024-12-26T06:56:13.438Z
+    '\n',
+    Date(), //  Thu Dec 26 2024 15:56:13 GMT+0900 (대한민국 표준시)
+    '\n',
+    new Date(999999999), // 인수는 밀리초(1970-1-1 00:00:00 기준)
+    '\n',
+    new Date('2020/3/25/10:00:00:00'), //  2020-03-25T01:00:00.000Z
+    '\n',
+    Date.now(), // 1735196331721 - UTC 기점으로 현재까지의 밀리초
+    '\n',
+    Date.parse('1970/01/02/09:00:00:00'), // 시간을 밀리초로
+    '\n',
+    Date.UTC(1970,0,3),
+    '\n',
+    new Date('2020/06/23').getMonth(), // 달 반환
+    '\n',
+    new Date('2020/06/23/12:30:10:150').getMilliseconds(), // 150 - 시간 반환
+);
 
 
+console.log('-----------------------------------------------------------------------------------------------------');
 
+// RegExp - 정규 표현식, 패턴 매칭 기능
+// i - 대소문자 구별 않고 패턴 검색
+// g - 대상 문자열 내에서 패턴과 일치하는 문자를 전역 검색
+// m - 문자열의 행이 바뀌더라도 패턴 검색을 계속한다
+console.log(
+    (/^\d{3}-\d{4}-\d{4}$/).test('010-1234-1234'), // 해당 패턴이 맞다면 true
+    '\n',
+    (/is/i).test(' is Is isisisi'), // is 패턴을 대소문자구분안하고(i) 검색해 값이 있다면 true
+    '\n',
+    (/is/).exec(' is Is isisisi'), // [ 'is', index: 1, input: ' is Is isisisi', groups: undefined ]
+    '\n',
+    ' is Is isisisi'.match(/is/g), //  [ 'is', 'is', 'is', 'is' ]
+    '\n',
+    'qwe qwerr fewf wew'.match(/.../g), //  [ 'qwe', ' qw', 'err', ' fe', 'wf ', 'wew' ]
+    '\n',
+    'q qqe qwe ewq qq'.match(/q{1,2}/g), // q가 최소한번 최대2번 반복하는 문자열
+    '\n',
+    'q qqe qwe ewq qq'.match(/q{2}/g), // q가 두번 반복하는 문자열 검색
+    '\n',
+    'q qqe qwe ewq qq'.match(/q{2,}/g), // q가 최소 2번 이상 반복되는 문자열 검색
+    '\n',
+    'q qqe qwe ewq qq'.match(/q+/g), // q가 최소 1번 이상 반복되는 문자열 검색
+    '\n',
+    'q qqe qwe ewq qq'.match(/qw?e/g), // w가 0번 이상 반복되고 e가 이어지는
+    '\n',
+    'q qqe qwe ewq qq'.match(/q|e/g), // q 또는 e 문자열 전역검색
+    '\n',
+    'q qqe qwe ewq qq'.match(/q+|e+/g), // q 또는 e가 반복되는 문자열 전역검색
+    '\n',
+    'q qqe qwe ewq qq'.match(/[qe]+/g), // q 또는 e 가 한번이상 반복되는 문자열 전역검색
+    '\n',
+    'q qqe qwe ewq qq'.match(/[a-z]+/g), // a~z 사이의 값이 한번 이상 반복되는
+    '\n',
+    '0,12,ㅈㅂㄷㄱ,asd'.match(/[\d,]+/g), // 0 ~ 9 또는 , 이 한번 이상 반복되는
+    '\n',
+    '0,12,ㅈㅂㄷㄱ,asd'.match(/[\D,]+/g), // 문자 또는 , 이 한번 이상 반복되는
+    '\n',
+    '0,12,ㅈㅂㄷㄱ,asd'.match(/[\w,]+/g), // 알파벳,숫자,언더스코어, , 가 한번 이상 반복되는
+    '\n',
+    '0,12,ㅈㅂㄷㄱ,asd'.match(/[\W,]+/g), // 알파벳,숫자,언더스코어가 아닌 문자 또는 , 가 한번이상 반복되는
+    '\n',
+    '0,12,ㅈㅂㄷㄱ,asd'.match(/[^0-9]+/g), // 숫자를 제외한 문자열 전역 검색
+    '\n',
+    (/^https/g).test('https://qwefqw.com'), // https 로 시작하면 true
+    '\n',
+    (/https$/g).test('https://qwefqw.comhttps'), // https 로 끝나면 true
+    '\n',
+);
 
+// String - new 연산자와 함께 호출시 String 인스턴스 생성 가능
+console.log(
+    new String(),
+    '\n',
+    new String('lee'),
+    '\n',
+    ('qwer')[0], // 배열처럼 특정 인덱스의 문자에 접근 가능, 단 값의 변경은 불가
+    '\n',
+    ('qwer').length,
+    '\n',
+    ('qwerqwer').indexOf('q'), // 0 - 인수로 전달반은 문자의 인덱스 반환, 없다면 -1 리턴
+    '\n',
+    ('qwer123').search(/123/), // 4 - 인수로 전달받은 정규식에 해당하는 문자의 인덱스 반환, 없다면 -1 리턴
+    '\n',
+    ('qwer123').includes('qwe'), // 있으면 true, 없으면 false
+    '\n',
+    ('qwer123').startsWith('qwe'), // 인수로 받은 문자열로 시작하면 true
+    '\n',
+    ('qwer123').charAt(0), // 해당 인덱스의 문자열 반환, 인덱스 벗어나면 빈 문자열 반환
+    '\n',
+    ('qwer123').substring(0,3), // 0-3 인덱스의 문자열 반환
+    '\n',
+    ('qwer123').slice(-4), // 뒤에서 4자리 잘라내어 반환
+    '\n',
+    ('qwer123').toUpperCase(), // 대문자로
+    '\n',
+    (' qwer123 ').trim(), // 앞뒤 공백 제거
+    '\n',
+    ('qwer123').repeat(3), // 문자열 3번 반복해 새로운 문자열 반환
+    '\n',
+    ('qwer123').replace('qwer','111'), // qewr을 111로, 여럿 존재시 첫번째 문자열만 치환
+    '\n',
+    ('q w er 123').split(' '), // 빈 문자열로 문자열을 구분해 배열로 반환
+    '\n',
+    ('q w er 123').split(' '), // 빈 문자열로 문자열을 구분해 배열로 반환
+    '\n',
+);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Symbol - 다른값과 중복되지 않는 유일무이한 값, 이름의 충돌 위험이 없는 유일한 프로퍼티 키 만들기 위해 사용
+// 값에 대한 설명이 같더라도 심벌은 유일무이한 값이다
+// 심벌 값은 암묵적으로 문자열이나 숫자 타입으로 변환되지 않는다
+// ... 단, 불리언 타입으로 암묵적으로 변환
+// 심벌 값을 프로퍼티 키로 사용시 외부 노출이 불필요한 프로퍼티를 은닉 가능
+console.log('=====================');
+// 인수로 전달받은 문자열을 키로 사용하여 키와 심벌 값의 쌍들이 저장되어 있는 전역 심벌 레지스트리에서 해당 키와 일치하는 심벌 값을 검색
+let sym = Symbol.for('qqq');
+console.log(Symbol.keyFor(sym)); // qqq
+console.log(
+    Symbol('qqq'),
+    '\n',
+    Symbol('eee') === Symbol('eee'), // false
+    '\n',
+    Symbol.for('eee') === Symbol.for('eee'),  // true -
+    '\n',
+    '\n',
+    '\n',
+    '\n',
+    '\n',
+    '\n',
+); //asd
