@@ -131,7 +131,7 @@ c1_ob1.f3(); // c1
 // c3의 f1은 f1의 상위 스코프인 c3의 constructor의 super과 this를 상속받기 때문에 에러 미발생
 class c2 {
     constructor() {
-        this.info = 'c2';
+        this.info = 'c2ifoinfoinfo';
     }
 
     f1() {
@@ -140,13 +140,20 @@ class c2 {
 }
 
 class c3 extends c2 {
+    constructor(){
+        super();
+        this.f2 = super.f1;
+    }
     f1 = () => {
         super.f1();
     }
 }
 
 let c3_ob = new c3();
+console.log('----');
 c3_ob.f1();
+c3_ob.f2();
+
 
 // Rest 파라미터 - 함수에 전달된 인수들의 목록을 배열로 전달받는다
 let fun1 = function (x, y, ...arr) { // 반대순서는 애러
@@ -202,7 +209,7 @@ console.log([1, 2, 3].fill(0)); // 모든 요소를 0으로, 두번째 인수는
 console.log([1, 2, [3, [4]]].flat(1)); // 인수는 평탄화할 깊이
 console.log('arr2 : ', arr2);
 
-console.log(['c', 'b', 'a'].sort()); // sort는 유니코드 순서로 정렬함으로, 정렬 순서를 정의하는 비교함수를 인수로 전달해야 한다
+console.log(['c', 'b', 'a'].sort()); // sort는 유니코드 순서로 정렬함으로, 숫자 정렬 순서를 정의하는 비교함수를 인수로 전달해야 한다
 console.log([55, 4, 21, 43, 63, 42].sort((a, b) => a - b)); // a-b 했을때 양수,음수,0 3가지 결과로 정렬 수행하며 해당 결과는 오름차순
 console.log( // 객체를 id 기준으로 오름차순 정렬
     [
@@ -261,7 +268,7 @@ console.log( // some - 조건을 하나라도 만족시 true 또는 false 반환
     [1,2,3,4,5]
         .some(x => x === 3)
 );
-console.log( // every - 주어진 조건을 하나라도 만족시
+console.log( // every - 모든 요소가 조건을 만족시
     [1,2,3,4,5]
         .every(x => x > 0)
 );
@@ -291,15 +298,14 @@ console.log( // findIndex - 조건을 만족하는 요소의 인덱스 반환
     })
 )
 
-console.log('------------------------------------------');
 // Number 생성자 함수 - Number 인스턴스를 생성
 console.log(new Number('10')); // 불리언과 숫자 문자열은 숫자열이 됨
 console.log(Number.EPSILON); // 부동소수점에 의한 오차를 해결하기 위해 사용
 console.log(Number.MAX_VALUE); // 자바스크립트에서 표현가능한 가장 큰 양수
 console.log(Number.MAX_SAFE_INTEGER); // 자바스크립트에서 안전하게 표현 가능한 가장 큰 정수값
+console.log('---------------------------------');
 console.log(
-    Number.isFinite(null), // false
-    isFinite(null), // true - 암묵적 타입 변환
+    Number.isFinite(null),isFinite(null), // false true - Number.isFinite는 암묵적 타입 변환 안 함
     '\n',
     Number.isInteger(0), // true
     Number.isInteger(null), // false
@@ -324,7 +330,6 @@ console.log(
     (10).toString(16) // a - 16진수 문자열로
 );
 
-
 // Math - 정적 프로퍼티와 메서드만 제공
 console.log(
     Math.PI, // 3.141592653589793
@@ -333,7 +338,7 @@ console.log(
     '\n',
     Math.round(1.1234), // 소수점 이하 반올림
     '\n',
-    Math.ceil(1.6), // 소수점 이하  올림
+    Math.ceil(1.6), // 소수점 이하 올림
     '\n',
     Math.floor(1.5), // 소수점 이하 내림
     '\n',
@@ -370,8 +375,6 @@ console.log(
     new Date('2020/06/23/12:30:10:150').getMilliseconds(), // 150 - 시간 반환
 );
 
-
-console.log('-----------------------------------------------------------------------------------------------------');
 
 // RegExp - 정규 표현식, 패턴 매칭 기능
 // i - 대소문자 구별 않고 패턴 검색
@@ -463,9 +466,8 @@ console.log(
 // Symbol - 다른값과 중복되지 않는 유일무이한 값, 이름의 충돌 위험이 없는 유일한 프로퍼티 키 만들기 위해 사용
 // 값에 대한 설명이 같더라도 심벌은 유일무이한 값이다
 // 심벌 값은 암묵적으로 문자열이나 숫자 타입으로 변환되지 않는다
-// ... 단, 불리언 타입으로 암묵적으로 변환s
+// ... 단, 불리언 타입으로 암묵적으로 변환
 // 심벌 값을 프로퍼티 키로 사용시 외부 노출이 불필요한 프로퍼티를 은닉 가능
-console.log('=====================');
 // 인수로 전달받은 문자열을 키로 사용하여 키와 심벌 값의 쌍들이 저장되어 있는 전역 심벌 레지스트리에서 해당 키와 일치하는 심벌 값을 검색
 let sym = Symbol.for('qqq');
 console.log(Symbol.keyFor(sym)); // qqq
@@ -475,10 +477,4 @@ console.log(
     Symbol('eee') === Symbol('eee'), // false
     '\n',
     Symbol.for('eee') === Symbol.for('eee'),  // true -
-    '\n',
-    '\n',
-    '\n',
-    '\n',
-    '\n',
-    '\n',
 );

@@ -32,12 +32,11 @@ console.log(Person1.prototype.hasOwnProperty('info_proto')); // true, info_proto
 // 모든 객체는 하나의 프로토타입을 가지며, 모든 프로토타입은 생성자 함수와 연결되어 있다
 // 내부 슬롯은 프로퍼티가 아니다
 // [[prototype]] 에 직접 접근 불가하나, proto 접근자 프로퍼티로 자신의 내부슬롯 [[prototype]] 에 간접적으로 접근 가능
-// proto__는 객체가 직접 소유한 프로퍼티가 아니고 Object.prototype의 프로퍼티이다,
+// __proto__는 객체가 직접 소유한 프로퍼티가 아니고 Object.prototype의 프로퍼티이다,
 // ... 따라서 모든 객체는 상속을 통해 Object.prototype.__proto__ 접근자 프로퍼티를 사용 가능
 let obj1 = {name: 'lee'}; // 객체 리터럴로 생성된 객체
 console.log(obj1); // obj1 객체의 프로퍼티 확인
 console.log(obj1.__proto__); // obj1 객체의 프로토타입을 확인
-console.log(Object.getOwnPropertyDescriptor(Object.prototype, 'proto')); // proto 는 Object.prototype의 접근자 프로퍼티임을 확인
 console.log(obj1.constructor === Object); // true, obj1을 만든 객체는 Object이다
 console.log(obj1.__proto__ === Object.prototype); // true, 자신을 생성한 객체의 프로토타입에 proto__로 접근 가능함을 확인
 console.log(obj1.constructor.prototype === Object.prototype); // true, obj1을만든 객체의 프로토타입은 Object의 프로토타입이다
@@ -57,10 +56,10 @@ obj4.__proto__ = obj5 // obj4의 프로토타입이 교체
 console.log(obj4.__proto__ === obj5); // true, obj5의 프로토타입을 obj4가 물려받은걸 확인
 
 
-// 함수 객체는 prototype를 직접소유
-// 함수 객체만 소유하는 prototype 프로퍼티는 생성자 함수가 생성할 인스턴스의 프로토타입을 가리킨다
+// 함수 객체는 prototype을 직접 소유
+// 함수의 prototype - 생성자 함수가 생성할 인스턴스의 프로토타입을 가리킨다
 // ... non-constructor 인 화살표 함수와 ES6 메서드 축약표현으로 정의한 메서드는 prototype를 소유하지 않고 프로토타입도 생성하지 않는다
-// proto - 모든 객체가 소유, 값은 프로토타입의 참조, 모든 객체가 사용, 객체가 자신의 프로퍼티에 접근 또는 교체위해 사용
+// __proto__ - 모든 객체가 소유, 값은 프로토타입의 참조, 모든 객체가 사용, 객체가 자신의 프로퍼티에 접근 또는 교체위해 사용
 // prototype - constructor이 소유, 값은 프로토타입의 참조, 생성자 함수가 사용, 생성자 함수가 자신이 생성할 인스턴스의 프로토타입을 할당하기 위해 사용
 
 let fun2 = function () {
@@ -68,10 +67,10 @@ let fun2 = function () {
 let fobj = new fun2();
 console.log(fun2.hasOwnProperty('prototype')); // true, 함수 객체가 prototype를 직접 소유함을 확인
 console.log(fobj.hasOwnProperty('prototype')); // false, 일반 객체는 prototype를 직접 소유하지 않음을 확인
-console.log(fun2.prototype === fobj.__proto__); // true, fobj의 프로토타입은 fun2로부터 물려받음을 확인
+console.log(fobj.__proto__=== fun2.prototype); // true, fobj의 프로토타입은 fun2로부터 물려받음을 확인
 console.log(fobj.constructor === fun2); // true, fobj를 생성한 생성자 함수는 fun2임을 확인
+console.log(fun2.prototype.constructor === fun2); // true, fun2의 프로토타입을 생성한 생성자 함수는 fun2이다
 console.log(fobj.constructor.prototype === fun2.prototype); // true, fobj을 생성한 생성자 함수의 프로토타입이 fun2의 프로토타입임을 확인
-console.log(fun2.prototype.constructor === fun2); // true, fun2의 프로토타입을 생성한 객체는 fun2이다
 
 
 // Object,Function 생성자 함수로 객체 생성시의 생성자 비교
@@ -83,7 +82,6 @@ console.log(fff.constructor === Function); // ture, fff 함수를 만든건 Func
 console.log(zzz.constructor === fff); // true, zzz 객체를 만든건 fff 생성자 함수이다
 console.log(zzz.constructor === Object); // false, zzz를 생성한건 Object 생성자 함수가 아님
 console.log(zzz.constructor === Function); // false, zzz를 생성한건 Function 생성자 함수가 아님
-
 
 // new 연산자 없이 리터럴 표현으로 객체를 생성할 경우도 프로토타입이 존재
 // 생성자 함수에 의해 생성된 객체는 아니지만 프로토 타입이 존재한다
@@ -112,6 +110,7 @@ class obj7 extends Object {
 let obj8 = new obj7;
 console.log(obj8); // obj7{}
 console.log(obj7.constructor === Object); // false
+console.log(obj7.constructor === Function); // true
 console.log(obj8.__proto__ === obj7.prototype); // true
 
 // Number 객체 생성
@@ -144,14 +143,14 @@ function custom() {
     this.name = 'custom'
 };
 let cus = new custom();
+cus.toString();
 console.log(custom.prototype); // {}
 console.log(cus.constructor === custom); // true
 console.log(cus.constructor.prototype === custom.prototype); // true
 console.log(cus.__proto__ === custom.prototype); // true
 
-console.log('-----------------33-------------------');
-console.log(custom.prototype.__proto__ === Object.prototype); // true
 console.log(custom.constructor === Function); //true
+console.log(custom.prototype.__proto__ === Object.prototype); // true
 console.log(custom.constructor.prototype === Function.prototype); // true
 console.log(custom.prototype.constructor === custom); // true
 console.log(custom.__proto__ === Function.prototype); // true
@@ -252,7 +251,7 @@ console.log(Person.prototype.__proto__ === Object.prototype); // true
 
 // 오버라이딩 - 상위 클래스가 가진 메서드를 해위 클래스가 재정의해서 사용
 // 프로퍼티 섀도잉 - 상속 관계에 의해 프로퍼티가 가려지는 현상
-// 하위 객체를 통해 상위 객체의 프로토타입의 프로퍼티를 삭제.변경은 불가
+// 하위 객체를 통해 상위 객체의 프로토타입의 프로퍼티를 삭제와 변경은 불가
 let t1 = function (name) {
     this.name = name;
 }
@@ -293,29 +292,24 @@ t2_1.__proto__ = t2.prototype;
 console.log(t2_1.constructor === t2); // true
 console.log(t2_1.constructor === Object); // false
 
-console.log('--------------');
 
 // instanceof - 프로토타입 체인의 연결을 순차적으로 평가,
 // 생성자 함수로부터 생성된 인스턴스의 .__proto__는 생성 시점에 결정
 // ... 중간에 체인이 끊켜도 인스턴스의 프로토타입 체인은 변동되지 않으나, 인스턴스가 참조하는 프로토타입 변경시 연결관계가 변경됨
-let t3 = function () {
-};
-let t3_1 = function () {
-};
-t3_1.prototype = Object.create(t3.prototype);
+let t3 = function () {};
+let t3_1 = function () {};
+let t3_1_1 = function () {};
+t3_1.prototype = Object.create(t3.prototype); // 연결!
 t3_1.prototype.constructor = t3_1;
-let t3_1_1 = function () {
-};
-t3_1_1.prototype = Object.create(t3_1.prototype);
+t3_1_1.prototype = Object.create(t3_1.prototype); // 연결!
 t3_1_1.prototype.constructor = t3_1_1;
 let t3_1_1_instance = new t3_1_1();
-console.log(t3_1_1_instance.constructor === t3); // false
-console.log(t3_1_1_instance instanceof t3); // true, 연결된 프로토타입 체인을 거슬러 올라가 순차적으로 평가
-t3_1.prototype = {};
-t3_1_1.prototype = {};
-console.log(t3_1_1_instance instanceof t3); // true, 변동없음
-t3_1_1_instance.__proto__ = {}; // 강제로 변경
+console.log(t3_1_1_instance instanceof t3); // true
+t3_1.prototype = null; // 연결파괴
+console.log(t3_1_1_instance instanceof t3); // true, 변동 안됨
+t3_1_1_instance.__proto__ = null;
 console.log(t3_1_1_instance instanceof t3); // false, 변동됨
+
 
 
 // 직접상속 - Object.create()에 의한
@@ -348,7 +342,6 @@ t4 = Object.create(fun_custom.prototype);
 t4.name = 't4';
 console.log(t4.__proto__ === fun_custom.prototype); // true
 
-console.log('--------------------------');
 // 직접상속 - __proto__에 의한
 let t5 = {x: 1};
 let t5_1 = {
@@ -417,7 +410,6 @@ console.log(Object.entries((t7_1)));
 // 호스트 객체 - ECMAScript에 정의 안됨, Dom.Bom,Canvas,XMLHttpRequest,fetch,requestAnimationFram,SVG,Web Storage,Web Component, Web Worker 등의 클라이언트 사이드 웹 api를 호스트 객체로 제공
 // 사용자 정의 객체 - 사용자가 직접 정의한 객체
 
-console.log('---------------');
 // Math, Reflect, JSON 제외한 모든 표준 빌트인 객체는 인스턴스 생성 가능한 생성자 함수
 // 생성자 함수 객체인 표준 빌트인 함수 객체는 프로토타입메서드,정적 메서드 제공
 // 생성자 함수 객체가 아닌 표준 빌트인 객체는 정적 메서드만 제공
@@ -464,12 +456,17 @@ console.log(eval1);
 console.log(eval2);
 eval3();
 
-// isFinite - 전달받은 인수가 유한수인지 검사
+// isFinite - 인수를 숫자로 변환 후 유한수이면 true
 console.log(isFinite(1)); // true
+console.log(isFinite('1')); // true
+console.log(isFinite(null)); // true
+console.log(isFinite('qwer')); // false
 console.log(isFinite(0 / 0)); // false, NaN임으로
 console.log(isFinite(1 / 0)); // false, Infinity 임으로
 
-// isNaN - NaN인지 검사
+
+
+// isNaN - 숫자로 타입 변환 후 NaN인지 검사
 console.log(isNaN(0 / 0)); // true
 console.log(isNaN(undefined)); // true
 console.log(isNaN('qwer')); // true
@@ -523,7 +520,6 @@ console.log(uriComp_enc, uriComp_dec);
 // this - 자기자신이 속산 객체 또는 자기자신이 생성할 인스턴스를 가리키는 자기참조변수
 // ... this를 통해 자신이 속한 객체 또는 자신이 생성할 인스턴스의 프로퍼티나 메소드를 참조가능
 // ... this가 가리키는 값인 this 바인딩은 함수 호출에 의해 동적으로 결정
-// ... 자기 자신이 속한 객체 이름을 통해 참조하는 방식은 자신이 속한 객체의 생성 시점에 영향을 받음으로 this로 접근하는게 바람직하다
 // this 바인딩 - 식별자와 값을 연결하는 과정, this와 this가 가리킬 객체를 바인딩, 상황에 따라 가리키는 대상이 다르다
 // 엄격모드의 this는 일반 함수 내부에서 undefined가 바인딩
 // 일반함수의 this는 함수를 호출한 객체에 의해 결정
@@ -538,7 +534,7 @@ let fun_this = function () {
             console.log(this.value1); // 일반함수의 this는 호출된 객체를 참조
         },
         fun2: () => {
-            console.log(this.value1); // 화살표 함수의 this는 정의된 스코프를 참조
+            console.log(this.value1); // 화살표 함수의 this는 자신이 선언된 위치의 상위 스코프를 가리킴
         }
     }
 };
@@ -546,7 +542,6 @@ let ins1 = new fun_this();
 ins1.in.fun1(); // 1
 ins1.in.fun2(); // 0
 
-// 함수의 상위스코프를 결정하는 방식인 렉시컬 스코프는 함수 정의가 평가되어 함수 객체가 생성되는 시점에 결정
 // this 바인딩은 함수 호출 시점에 결정
 let q1 = function () {
     console.log(this);
@@ -560,44 +555,10 @@ q1.call(q2); // { name: 'q2' } - 간접 호출
 q1.apply(q2); // { name: 'q2' } - 간접 호출
 q1.bind(q2)(); // { name: 'q2' }  - 간접 호출
 
-
-// 엄격모드 아닐시 일반함수로서 호출된 모든 함수의 this는 전역 객체를 가리킨다
-let q3 = {
-    q2_in1() {
-
-        console.log('q2_in1 : ', this);
-
-        function q2_in1_in1() {
-            console.log('q2_in1_in1 : ', this);
-        };
-        q2_in1_in1();  // undefined - 일반 함수로서 호출
-        new q2_in1_in1();  // q2_in1_in1 {} - 생성자 함수로서 호출
-
-        const that = this;
-
-        function q1_in1_in2() {
-            console.log('q1_in1_in2 : ', that);
-        }
-
-        q1_in1_in2(); // that :  { q2_in1: [Function: q2_in1] } - 매서드 내부의 중첩 함수나 콜백 함수의 this 바인딩을 메서드의 this 바인딩과 일치시킨 경우
-
-        let q1_in1_in3 = () => {
-            console.log('q1_in1_in3 : ', this);
-        }
-        q1_in1_in3(); // { q2_in1: [Function: q2_in1] } - 화살표 함수 내부의 this는 상위 스코프의 this를 가리킨다
-
-        // setTimeout(function(){
-        //     console.log(this); // Timeout{...} - 엄격모드라 그런가 ?? 책에는 전역 객체를 가리킨다 명시됨..
-        // },1);
-
-    }
-}
-q3.q2_in1(); // { q2_in1: [Function: q2_in1] } - 객체의 메서드로서 호출
-
-
 // 객체의 메서드는 객체의 속성으로 존재하는 함수, 다른 객체의 프로퍼티에 할당 가능, 일반 변수에 할당하여 일반 변수로서 사용 가능
 // ES6의 메서드 축약 표현은 this 바인딩 방식에 영향주지 않는다
 // 화살표 함수는 this 바인딩시 상위 스코프의 this를 따른다
+
 let q4 = {
     name: 'q4',
     info1: function () {
@@ -767,7 +728,7 @@ console.log('-------------------------------------------------------------------
 // 렉시컬 환경 - 식별자와 식별자에 바인된 값, 상위 스코프에 대한 참조를 기록하는 자료구조로 실행 컨텍스트를 구성하는 컴포넌트
 // ... 스코프와 식별자를 관리
 // ... 키와 값을 가진 객체 형태의 스코프를 생성해 식별자로 키를 등록하고 식별자에 바인딩된 값을 관리
-// 렉시컬 환경의 환경 레코드 - 스코프에 포함된 식별자를 등로갛고 등록된 식별장 바인딩된 값을 관리하는 저장소, 환경 레코드는 소스코드 타입따라 관리하는 내용이 다르다
+// 렉시컬 환경의 환경 레코드 - 스코프에 포함된 식별자를 등록하고 등록된 식별자 바인딩된 값을 관리하는 저장소, 환경 레코드는 소스코드 타입따라 관리하는 내용이 다르다
 // 레시컬 환경의 외부 렉시컬 환경에 대한 참조 - 외부 렉시컬 환경에 대한 참조는 상위 스코프를 가리킨다, 외부 렉시컬 환경에 대한 참조를 통해 단방향 링크드 리스트인 스코프 체인을 구현
 
 // 전역 객체도 프로토타입의 일원이다
@@ -992,14 +953,14 @@ for (let i = 0; i < 10; i++) {
 // ... 생성자 함수가 객체를 생성하는 방식과 비교되는 새로운 객체 생성 메커니즘
 
 console.log('--------------------------------------------------------------------');
-// 클래스는  함수로 평가되고, 함수 고유의 프로퍼티를 모두 가진다
+// 클래스는 함수로 평가되고, 함수 고유의 프로퍼티를 모두 가진다
 // 클래스는 런타임 이전 평가되어 함수 객체 생성, 이때 생성된 함수 객체는 constructor이고 생성자 함수이다, 프로토타입도 생성
 // 생성자 함수와는 다르게 정의 이전에 참조 불가, 호이스팅이 발생하나 let.const 키워드로 선언된 변수처럼 일시적 사각지대에 의해 정의 이전 접근 불가
 // 클래스 몸체에 정의 가능한 메서드는 constructor생성자.프로토타입메서드.정적메서드 3가지
 // 클래스에 정의한 constructor은 메서드로 해석되는게 아닌 클래스가 평가되어 생성한 함수 객체 코드의 일부가 된다
 // ... 클래스 정의가 평가되면 constructor의 기술된 동작을 하는 함수 객체가 생성된다
 // ... 프로토타입의 constructor과 클래스의 constructor은 직접적인 관련이 없다
-// 클래스의 constructor은 클래스 내에 최대 한개만 존재 가능하고 생략 가능하며 생량시 암묵적으로 constructor이 정의
+// 클래스의 constructor은 클래스 내에 최대 한개만 존재 가능하고 생략 가능하며 생략시 암묵적으로 constructor이 정의
 // ... constructor 생략한 클래스는 인스턴스 생성시 빈 constructor에 의해 빈 객체를 생성
 // ... 클래스로 인스턴스 생성시 생성할 인스턴스의 프로퍼티 설정하려면 constructor 내부에서 this로 프로퍼티를 추가
 // ... constructor은 반환문을 갖지 않아야 한다, 만약 반환문으로 명시적으로 객체를 리턴시 암묵적인 this 반환이 무시되고 반환값이 리턴된다
@@ -1015,6 +976,7 @@ console.log('-------------------------------------------------------------------
 // 접근자 프로퍼티 - 객체의 속성에 값을 직접 저장하지 않고 값을 가져오거나 설정할 때 실행되는 함수로 정의된 프로퍼티
 // 클래스 필드는 간단한 값 초기화시 사용
 // 클래스 필드에 함수 할당시 프로토타입 메서드가 아닌 인스턴스 메서드가 됨으로 권장되지 않는다
+// 클래스 필드와 콘스트럭처의 차이는 콘스트럭처로 인스턴스 생성시 값 초기화가 가능하다는 점이다, 콘스트럭처로 클래스 필드를 초기화 하는것도 가능
 
 // ** 인스턴스 생성과정 **
 // 1. 인스턴스 생성과 this 바인딩
@@ -1040,9 +1002,13 @@ class c4 {
     #info;
     // 인스턴스의 접근자로 접근 가능한 클래스 필드
     name;
-    // 인스턴스에서 접근 가능한 클래스 필드의 메소드
+    // 인스턴스에서 접근 가능한 클래스 필드의 메소드 - 프로토타입 메서드가 아니며 각 인스턴스에 추가됨, 주로 화살표 함수를 사용해 콜백함수로서 사용하여 화살표 함수만의 this 바인딩 방식을 활용
     m5 = function () {
         console.log('class 메소드');
+    }
+
+    mmmm = () => { // 해당 함수를 인스턴스.mmmm() 형태로 접근해 다른 함수의 매개변수로 전달시 전달 대상의 this.name을 출력하게 된다
+        console.log(this.name);
     }
 
     // 인스턴스에서 접근 불가한 정적 메서드
