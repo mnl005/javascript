@@ -263,14 +263,67 @@ console.log(
     document.body.querySelector('ul').firstChild.nodeValue, // ttt
 );
 
+// textContent - 선택된 요소 노드 내부의 모든 영역의 텍스트에 접근, innerText은 textContent 와 유사하나 느림으로 비권장
+console.log(
+    document.querySelector('body').textContent // ttttqwer
+)
+
+// innerHTML로 요소 추가시 기존 요소는 삭제
+document.querySelector('ul').innerHTML = '<h1></h1>';
+console.log(document.querySelector('ul').innerHTML);
+
+// insertAdjacentHTML 로 요소 추가시 기존요소 제거하지 않고 새로운 요소를 삽입
+document.querySelector('ul > h1').insertAdjacentHTML('beforebegin', '<div>1</div>'); // 선택 요소의 바로 앞에 형제로 삽입
+document.querySelector('ul > h1').insertAdjacentHTML('afterbegin', '<div>2</div>'); // 선택 요소의 첫번째 자식으로 삽입
+document.querySelector('ul > h1').insertAdjacentHTML('beforeend', '<div>3</div>'); // 선택 요소의 마지막 자식으로
+document.querySelector('ul > h1').insertAdjacentHTML('afterend', '<div>4</div>'); // 선택 요소의 다음 형재로
+console.log(document.querySelector('ul').outerHTML);
+// <ul>
+//     <div>1</div>
+//     <h1>
+//         <div>2</div>
+//         <div>3</div>
+//     </h1>
+//     <div>4</div>
+// </ul>
+
+// 노드 생성
+let ele4 = document.createElement('div'); // 요소 노드 생성
+let tele1 = document.createTextNode('qwer') // 텍스트 노드 생성
+let ele5 = document.createElement('ul') // 텍스트 노드 생성
+ele4.appendChild(tele1); // 자식으로 추가
+ele4.insertBefore(ele5, ele4.lastElementChild); // 자식중 마지막 자식의 앞에 추가
+console.log(ele4.outerHTML);
+
+// 노드 이동
+let ele6 = document.createElement('div');
+ele6.innerHTML = `
+<div>1</div>
+<div>2</div>
+<div>3</div>
+<div>4</div>
+`;
+console.log(ele6.outerHTML);
+let [chi1, chi2, chi3, chi4] = ele6.children;
+ele6.appendChild(chi1);
+console.log(ele6.outerHTML);
+
+// 노드 복사 - 깊은 복사 해야 자손 노드가 포함된 사본이 생성됨
+console.log(
+    '\n',
+    ele6.cloneNode(false).outerHTML,
+    '\n',
+    ele6.cloneNode(true).outerHTML,
+);
 
 
+// 노드 교체
+console.log(ele6.outerHTML);
+ele6.replaceChild(ele6.firstElementChild,ele6.lastElementChild); // ele6의 마지막 자식을 첫번째 자식으로 교체
+console.log(ele6.outerHTML);
 
-
-
-
-
-
+// 노드 삭제
+// 733
 
 
 
