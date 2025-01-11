@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "dependencies": {
+    "esprima": "^4.0.1",
+    "jsdom": "^25.0.1"
+  }
+}
