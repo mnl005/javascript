@@ -399,7 +399,7 @@ console.log(ele11.outerHTML);
 // 이벤트 핸들러 등록 - 브라우저에게 이벤트 헨들러의 호출을 위임
 // 이벤트 드리븐 프로그래밍 - 프로그램의 흐름을 이벤트 중심으로 제어하는것
 
-// 🖱️ 마우스(Mouse) 이벤트
+//  마우스(Mouse) 이벤트
 // click - 마우스 버튼 클릭 시 발생 (mousedown → mouseup → click)
 // dblclick - 동일한 요소를 빠르게 두 번 클릭 시 발생
 // mousedown - 마우스 버튼을 누를 때 발생
@@ -411,35 +411,35 @@ console.log(ele11.outerHTML);
 // mouseout - 마우스가 요소 밖으로 나갈 때 발생 (자식 요소로 이동해도 이벤트 발생)
 // contextmenu - 마우스 오른쪽 버튼 클릭 시 발생 (컨텍스트 메뉴 표시)
 
-// 🧑‍💻 키보드(Keyboard) 이벤트
+//  키보드(Keyboard) 이벤트
 // keydown - 키를 누를 때 발생 (반복 입력 가능)
 // keyup - 키를 놓을 때 발생
 // keypress - 키를 누를 때 발생 (deprecated, 사용 지양)
 
-// 📱 포커스(Focus) 이벤트
+//  포커스(Focus) 이벤트
 // focus - 요소가 포커스를 받을 때 발생
 // blur - 요소의 포커스가 해제될 때 발생
 // focusin - 요소 또는 하위 요소가 포커스를 받을 때 발생 (버블링 가능)
 // focusout - 요소 또는 하위 요소의 포커스가 해제될 때 발생 (버블링 가능)
 
-// 📦 폼(Form) 이벤트
+//  폼(Form) 이벤트
 // submit - 폼이 제출될 때 발생
 // reset - 폼이 초기화될 때 발생
 // change - 입력 요소의 값이 변경되고 포커스를 잃을 때 발생
 // input - 입력 요소의 값이 변경될 때마다 발생 (실시간)
 
-// 📊 윈도우(Window) 이벤트
+//  윈도우(Window) 이벤트
 // load - 리소스가 모두 로드되었을 때 발생
 // unload - 페이지가 언로드될 때 발생 (deprecated)
 // resize - 윈도우 크기가 변경될 때 발생
 // scroll - 사용자가 스크롤할 때 발생
 // beforeunload - 사용자가 페이지를 떠나기 직전에 발생
 
-// 🌐 네트워크(Network) 이벤트
+//  네트워크(Network) 이벤트
 // online - 네트워크가 온라인 상태일 때 발생
 // offline - 네트워크가 오프라인 상태일 때 발생
 
-// 🎯 드래그(Drag & Drop) 이벤트
+// 드드래그(Drag & Drop) 이벤트
 // drag - 요소가 드래그되는 동안 지속적으로 발생
 // dragstart - 드래그가 시작될 때 발생
 // dragend - 드래그가 종료될 때 발생
@@ -448,7 +448,7 @@ console.log(ele11.outerHTML);
 // dragover - 드래그된 요소가 드롭 타겟 위에 있을 때 발생
 // drop - 드래그된 요소가 드롭 타겟에 놓일 때 발생
 
-// 📡 기타 이벤트
+// 기타 이벤트
 // change - 입력값이 변경될 때 발생
 // select - 텍스트가 선택되었을 때 발생
 // wheel - 마우스 휠을 사용할 때 발생
