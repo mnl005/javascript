@@ -342,7 +342,7 @@ try {
 // 또는
 // export {name, fun1};
 // 또는
-// export default name = 'qwer'; // default 키워드 사용한 경우 var,let,const 사용 불가
+// export default name = 'qwer'; // default 키워드 사용한 경우 var,let,const 사용 불가, default 사용시 한 모듈당 하나만 사용가능
 
 // import - 모듈 사용자는 모듈이 공개한 자산 중 일부 또는 전체를 선택해 자신의 스코프 내로 불러들여 재사용
 // import {name, fun1} from './module.mjss/';
