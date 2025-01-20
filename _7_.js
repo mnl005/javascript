@@ -229,13 +229,13 @@ Promise.allSettled([
     console.log("완료");
   });
 
-// 둘은 동일
+// 이미 해결된 값을 사용하는경우, new키워드로 프로미스 객체 생성해 비동기 작업을 정의하는경우
 let p1 = Promise.resolve([1, 2, 3]);
 let p2 = new Promise((resolve) => resolve([1, 2, 3]));
 p1.then(console.log);
 p2.then(console.log);
 
-// 둘은 동일
+// 이미 해결된 값을 사용하는경우, new키워드로 프로미스 객체 생성해 비동기 작업을 정의하는경우
 let p3 = Promise.resolve([1, 2, 3]);
 let p4 = new Promise((_, reject) => reject(new Error("erroror")));
 p3.catch(console.log);
